@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" href="/css/style.css">
 
-    <link rel="stylesheet" href="/js/google-code-prettify/tomorrow-night-eighties.min.css">
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
 
   </head>
 
@@ -83,23 +83,31 @@
 <p>在Python环境下，如果想操作MySQL数据库，难免会调用相应的包，比如常用的：MySQLdb通过导入：import MySQLdb 后，可直接调用里面的方法</p>
 </blockquote>
 <p>默认情况下，MySQLdb包是没有安装的，不信？ 看到类似下面的代码你就信了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-bash-3.2# /usr/local/python2.7.3/bin/python get_cnblogs_news.py </div><div class="line">Traceback (most recent call last):</div><div class="line">  File &quot;get_cnblogs_news.py&quot;, line 9, in &lt;module&gt;</div><div class="line">    import MySQLdb</div><div class="line">ImportError: No module named MySQLdb</div></pre></td></tr></table></figure>
-<p>这时我们就不得不安装MySQLdb包了。安装其实也挺简单，具体步骤如下：</p>
+<pre><code>-bash-3.2# /usr/local/python2.7.3/bin/python get_cnblogs_news.py 
+Traceback (most recent call last):
+  File &quot;get_cnblogs_news.py&quot;, line 9, in &lt;module&gt;
+    import MySQLdb
+ImportError: No module named MySQLdb
+</code></pre><p>这时我们就不得不安装MySQLdb包了。安装其实也挺简单，具体步骤如下：</p>
 <p> 1、下载 MySQL for Python<br>地址：<a href="http://sourceforge.net/projects/mysql-python/files/mysql-python/" target="_blank" rel="external">http://sourceforge.net/projects/mysql-python/files/mysql-python/</a><br>我这里安装的是1.2.3版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">wget http://sourceforge.net/projects/mysql-python/files/</div><div class="line">mysql-python/1.2.3/MySQL-python-1.2.3.tar.gz</div></pre></td></tr></table></figure>
-<p>2、解压</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf MySQL-python-1.2.3.tar.gz</div></pre></td></tr></table></figure>
-<p>3、安装</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd MySQL-python-1.2.3</div><div class="line">python setup.py build</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
-<blockquote>
+<pre><code>wget http://sourceforge.net/projects/mysql-python/files/
+mysql-python/1.2.3/MySQL-python-1.2.3.tar.gz
+</code></pre><p>2、解压</p>
+<pre><code>tar zxvf MySQL-python-1.2.3.tar.gz
+</code></pre><p>3、安装</p>
+<pre><code>cd MySQL-python-1.2.3
+python setup.py build
+python setup.py install
+</code></pre><blockquote>
 <p>==注意：==<br>如果在执行：python setup.py build 遇到以下错误：</p>
 </blockquote>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">EnvironmentError: mysql_config not found</div></pre></td></tr></table></figure>
-<p>首先查找mysql_config的位置，使用<br>find / -name mysql_config ，比如我的在/usr/local/mysql/bin/mysql_config<br>修改==setup_posix.py==文件，在26行：<br>mysql_config.path = “mysql_config” 修改为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql_config.path = “/usr/local/mysql/bin/mysql_config”</div></pre></td></tr></table></figure>
-<p>保存后，然后再次执行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">python setup.py build</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
-
+<pre><code>EnvironmentError: mysql_config not found
+</code></pre><p>首先查找mysql_config的位置，使用<br>find / -name mysql_config ，比如我的在/usr/local/mysql/bin/mysql_config<br>修改==setup_posix.py==文件，在26行：<br>mysql_config.path = “mysql_config” 修改为：</p>
+<pre><code>mysql_config.path = “/usr/local/mysql/bin/mysql_config”
+</code></pre><p>保存后，然后再次执行：</p>
+<pre><code>python setup.py build
+python setup.py install
+</code></pre>
 	</div>
 	<div class="meta split">
 		<time class="post-date" datetime="2017-01-10T09:38:14.000Z" itemprop="datePublished">2017-01-10</time>
