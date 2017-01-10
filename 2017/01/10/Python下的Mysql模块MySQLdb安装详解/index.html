@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>Hexo</title>
+    <title>Python下的Mysql模块MySQLdb安装详解 | Hexo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
     
@@ -72,20 +72,44 @@
     <!--文章-->
 <article>
 	
+  
+    <h1 class="post-title" itemprop="name">
+      Python下的Mysql模块MySQLdb安装详解
+    </h1>
+  
+
 	<div class='post-body mb'>
-		<hr>
-<p>title: 搭建了一个博客系统<br>date: 2017-01-10 16:43:18<br>tags:<br>—s</p>
+		<h3 id="Python下的Mysql模块MySQLdb安装详解"><a href="#Python下的Mysql模块MySQLdb安装详解" class="headerlink" title="Python下的Mysql模块MySQLdb安装详解"></a>Python下的Mysql模块MySQLdb安装详解</h3><blockquote>
+<p>在Python环境下，如果想操作MySQL数据库，难免会调用相应的包，比如常用的：MySQLdb通过导入：import MySQLdb 后，可直接调用里面的方法</p>
+</blockquote>
+<p>默认情况下，MySQLdb包是没有安装的，不信？ 看到类似下面的代码你就信了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-bash-3.2# /usr/local/python2.7.3/bin/python get_cnblogs_news.py </div><div class="line">Traceback (most recent call last):</div><div class="line">  File &quot;get_cnblogs_news.py&quot;, line 9, in &lt;module&gt;</div><div class="line">    import MySQLdb</div><div class="line">ImportError: No module named MySQLdb</div></pre></td></tr></table></figure>
+<p>这时我们就不得不安装MySQLdb包了。安装其实也挺简单，具体步骤如下：</p>
+<p> 1、下载 MySQL for Python<br>地址：<a href="http://sourceforge.net/projects/mysql-python/files/mysql-python/" target="_blank" rel="external">http://sourceforge.net/projects/mysql-python/files/mysql-python/</a><br>我这里安装的是1.2.3版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">wget http://sourceforge.net/projects/mysql-python/files/mysql-python/1.2.3/MySQL-python-1.2.3.tar.gz</div></pre></td></tr></table></figure>
+<p>2、解压</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">tar zxvf MySQL-python-1.2.3.tar.gz</div></pre></td></tr></table></figure>
+<p>3、安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd MySQL-python-1.2.3</div><div class="line">python setup.py build</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
+<blockquote>
+<p>==注意：==<br>如果在执行：python setup.py build 遇到以下错误：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">EnvironmentError: mysql_config not found</div></pre></td></tr></table></figure>
+<p>首先查找mysql_config的位置，使用<br>find / -name mysql_config ，比如我的在/usr/local/mysql/bin/mysql_config<br>修改==setup_posix.py==文件，在26行：<br>mysql_config.path = “mysql_config” 修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql_config.path = “/usr/local/mysql/bin/mysql_config”</div></pre></td></tr></table></figure>
+<p>保存后，然后再次执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">python setup.py build</div><div class="line">python setup.py install</div></pre></td></tr></table></figure>
 
 	</div>
 	<div class="meta split">
-		<time class="post-date" datetime="2017-01-10T09:24:21.000Z" itemprop="datePublished">2017-01-10</time>
+		<time class="post-date" datetime="2017-01-10T09:38:14.000Z" itemprop="datePublished">2017-01-10</time>
 	</div>
 </article>
 
 <!--评论-->
 
 	
-<div class="ds-thread" data-thread-key="搭建了一个博客系统" data-title="" data-url="http://yoursite.com/2017/01/10/搭建了一个博客系统/"></div>
+<div class="ds-thread" data-thread-key="Python下的Mysql模块MySQLdb安装详解" data-title="Python下的Mysql模块MySQLdb安装详解" data-url="http://yoursite.com/2017/01/10/Python下的Mysql模块MySQLdb安装详解/"></div>
 <script type="text/javascript">
 
 var duoshuoQuery = {short_name:"yumemor"};
