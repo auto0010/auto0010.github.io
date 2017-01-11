@@ -688,6 +688,11 @@ article .post-body p {
   line-height: 27px;
   color: rgba(2,0,0,0.6);
 }
+article .post-body a {
+  font-size: 15px;
+  line-height: 27px;
+  color: #87cefa;
+}
 article .post-body >:last-child {
   margin-bottom: 0;
 }
