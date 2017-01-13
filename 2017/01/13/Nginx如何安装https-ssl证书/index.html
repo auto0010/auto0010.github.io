@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>Nginx如何安装https/ssl证书 | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="http://gushi.li" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      Nginx如何安装https/ssl证书
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<blockquote>
+<p>今天待着想起腾讯云有免费1年的SSL证书，然后点击了申请，擦啊擦，原来申请不是域名不合法，就是审核不通过，这次我的<a href="http://www.opqnext.com" target="_blank" rel="external">www.opqnext.com</a> 居然破天荒了哎，秒过…</p>
+</blockquote>
+<ul>
+<li>那就开始安装吧</li>
+</ul>
+<p>将域名 www.opqnext.com 的证书文件1 <em>www.opqnext.com</em> bundle.crt 、私钥文件2_www.opqnext.com.key保存到同一个目录，例如/usr/local/nginx/conf目录下。</p>
+<p>更新Nginx根目录下 conf/nginx.conf 文件如下：</p>
+<pre><code>server {
+        listen 443;
+        server_name www.opqnext.com; #填写绑定证书的域名
+        ssl on;
+        ssl_certificate 1_www.opqnext.com_bundle.crt;
+        ssl_certificate_key 2_www.opqnext.com.key;
+        ssl_session_timeout 5m;
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2; #按照这个协议配置
+        ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;#按照这个套件配置
+        ssl_prefer_server_ciphers on;
+        location / {
+            root   html; #站点目录
+            index  index.html index.htm;
+        }
+    }
+</code></pre><table>
+<thead>
+<tr>
+<th>配置文件参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>listen 443</td>
+<td>SSL访问端口号为443</td>
+</tr>
+<tr>
+<td>ssl on</td>
+<td>启用ssl功能</td>
+</tr>
+<tr>
+<td>ssl_certificate</td>
+<td>证书文件</td>
+</tr>
+<tr>
+<td>ssl_certificate_key</td>
+<td>私钥文件</td>
+</tr>
+<tr>
+<td>ssl_protocols</td>
+<td>使用的协议</td>
+</tr>
+<tr>
+<td>ssl_ciphers</td>
+<td>配置加密套件，写法遵循openssl标准</td>
+</tr>
+</tbody>
+</table>
+<p>然后 nginx -t 检测配置文件 nginx -s reload 重启nginx就OK了</p>
+<p>我是这么想的，但是还是出现了问题…</p>
+<ul>
+<li>问题1：unknown directive “ssl”</li>
+</ul>
+<p>报错如下：</p>
+<pre><code>nginx: [emerg] unknown directive &quot;ssl&quot; in /usr/local/nginx/conf/vhost/blog.com.conf:5
+nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
+</code></pre><p>出现这个错误说明没有将ssl模块编译进nginx，在configure的时候加上“–with-http_ssl_module”即可</p>
+<p>详细一点：</p>
+<blockquote>
+<p>#下载你当前版本的nginx包，并且解压 进到目录<br>./configure –with-http_ssl_module</p>
+<p>#切记千万不要make install 那样就覆盖安装了<br>make</p>
+<p>#将原来的nginx备份 备份之前先kill当前正在启动的nginx<br>cp /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx.bak</p>
+<p>#make之后会在当前目录生成 objs 目录<br>cp objs/nginx /usr/local/nginx/sbin/nginx</p>
+<p>#然后重新启动nginx<br>/usr/local/nginx/sbin/nginx</p>
+</blockquote>
+<ul>
+<li>问题2：http 转到 https</li>
+</ul>
+<p>据说是有加rewrite的方法：</p>
+<pre><code>rewrite ^/(.*)$ http://domain.com/$1 permanent;
+</code></pre><p>但是好像现在nginx新版本已经换了种写法：</p>
+<pre><code>server {
+    listen      80;
+    server_name    www.opqnext.com;
+    return      301 https://$server_name$request_uri;
+}
+
+server {
+    listen      443 ssl;
+    server_name    www.opqnext.com;
+
+    [....]
+}
+</code></pre><p>反正这种方法挺好使，然后重启 nginx 终于完成了！</p>
+<p><a href="http://music.163.com/#/song?id=28949129" target="_blank" rel="external">两个人的假期 - 痛仰乐队</a></p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-01-13T09:08:23.000Z" itemprop="datePublished">2017-01-13</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="Nginx如何安装https-ssl证书" data-title="Nginx如何安装https/ssl证书" data-url="http://c.knowledgeroot.net/2017/01/13/Nginx如何安装https-ssl证书/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"yumemor"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='http://tva4.sinaimg.cn/crop.174.4.448.448.180/6ccb7279jw1ebvw3t6399j20ks0cmgmo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
