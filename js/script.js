@@ -88,8 +88,8 @@
 
         var bannerNode = $('.top-image');
         if(bannerNode.data('enable')){
-            var index = parseInt((Math.random() * 4) + 1);
-            bannerNode.attr('style','background-image:url(/banner/'+index+'.jpg)');
+            var index = parseInt((Math.random() * 7) + 1);
+            bannerNode.attr('style','background-image:url(http://ojloicygc.bkt.clouddn.com/'+index+'.jpg)');
         }
     })
 
