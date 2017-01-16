@@ -172,6 +172,10 @@ server {
     [....]
 }
 </code></pre><p>反正这种方法挺好使，然后重启 nginx 终于完成了！</p>
+<ul>
+<li>问题3：为什么你的网站已经是https了，但是在浏览器上还是不绿</li>
+</ul>
+<p>那是因为你的网站里有非https的请求，可能依然有http的请求，你可以打开chrome里的network调试一下,也可以查看地址栏前面的小叹号，他会告诉你为什么你头上不绿！</p>
 <p><a href="http://music.163.com/#/song?id=28949129" target="_blank" rel="external">两个人的假期 - 痛仰乐队</a></p>
 
 	</div>
