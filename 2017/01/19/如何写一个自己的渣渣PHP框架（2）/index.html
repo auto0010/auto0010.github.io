@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>如何写一个自己的渣渣PHP框架（2） | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      如何写一个自己的渣渣PHP框架（2）
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>果然菜的不行啊，我想半天这个配置文件应该到底怎么引入了。</p>
+<p>先听一首空中狂欢节的 <a href="http://music.163.com/#/song?id=25923413" target="_blank" rel="external">川</a> 压压惊，想想 <a href="http://music.163.com/#/user/home?id=6451563" target="_blank" rel="external">SEA_THAW</a> 说：“我去了日本她去了比利时 山也辽阔 海也辽阔 再见也说的容易”。我就…，我走过这么多的路，见过这么多的人，看过那么多颗或纯洁或无良的心，我听过那么多句：“我是如此的爱你”。唯有从你嘴里发出的，最让我有想哭的冲动。就像刘子芙的 <a href="http://music.163.com/#/song?id=410715806" target="_blank" rel="external">多爱你一天</a>，不止如此。</p>
+<p>既然如此，就先把自动加载说一下。</p>
+<p>框架来说，简单点，就是根据你的ur地址，比如 index.php?c=index&amp;a=run 大多数应该都是这样吧，那么框架是如何根据 index 和 run 去找到 index 控制器，然后调用其中的 run 方法。当然后面还可以加很多的参数暂且先不说。确切的来讲你的 index 控制器也是一个类，你什么时候 new 的这个类呢？你什么时候调用的 run 方法？这就是框架要做的事情，就是我理解的 <em>路由</em> 和 <em>自动加载</em> 。</p>
+<p>接着来，建立框架核心目录 /data/momoma/core 在core目录建立 init.php 文件作为框架核心入口文件。 建立目录 /data/momoma/core/momoma 在 momoma 里建立 AutoLoad.php 文件，（文字表述写框架的过程简直是好无力呀）：</p>
+<pre><code>/**
+ * 自动加载类
+ * User: momoma
+ * Date: 2017/1/19
+ * Time: 上午10:41
+ */
+namespace core\momoma;
+
+class AutoLoad {
+
+    public static function loadprint($class){
+        $file = MOMOMA_PATH.&quot;/&quot;.$class.&quot;.php&quot;;
+        // &quot;Linux需要转义斜杠&quot;;
+        $file = str_replace(&#39;\\&#39;,&#39;/&#39;,$file);
+        echo $file.&quot;&lt;br&gt;&quot;;    //这句话是为了调试使用
+        if (is_file($file)) {
+            include($file);
+        }
+    }
+}
+</code></pre><p>使用命名空间，你使用过命名空间吗？没有的话一定要用上。你说这么小的项目完全不需要使用命名空间啊，小项目正好用熟悉一下，不然大项目更不会用。(命名空间一定要根据目录来定义，这样为自动加载做准备)</p>
+<p>然后在 momoma 里建立 Momoma.php 文件，作为框架核心类。</p>
+<pre><code>/**
+ * 框架核心类
+ * User: momoma
+ * Date: 2017/1/19
+ * Time: 上午10:52
+ */
+
+namespace core\momoma;
+
+class Momoma {
+
+    public function run(){
+        echo &quot;框架核心入口&quot;;
+    }
+}
+</code></pre><p>这个时候来看 init.php :</p>
+<pre><code>/**
+ * 框架核心入口文件
+ * User: momoma
+ * Date: 2017/1/19
+ * Time: 上午10:39
+ */
+
+require_once MOMOMA_PATH.&#39;/core/momoma/AutoLoad.php&#39;;
+
+use \core\momoma\AutoLoad;
+use \core\momoma\Momoma;
+
+// 自动加载
+spl_autoload_register([new AutoLoad(),&#39;loadprint&#39;]);
+
+// 框架核心入口
+$momoma = new Momoma();
+$momoma-&gt;run();
+</code></pre><p><a href="http://php.net/manual/zh/function.spl-autoload-register.php" target="_blank" rel="external">spl_autoload_register</a> 是今天的重点。</p>
+<p>看了半天php官方文档，说实话我还是没有理解其中的意思。我自己的理解就是，当你要在代码中 new 一个 Route 类的时候，你肯定得先 include 这个类文件。不然会直接报错告诉你 <em>“Class ‘Route’ not found”</em> 的。比如我在上面 new 了 Momoma 这个类，我没有 include ，这个时候 spl_autoload_register 就会发生作用，当我要 new 一个不存在的类的时候，程序就会自动触发 spl_autoload_register 自动注册的方法，也就是 AutoLoad 类里面的 loadprint 方法。loadprint 方法会接收到你要 new 的这个类，包含命名空间。然后，定义这个文件，<em>$file = MOMOMA_PATH.”/“.$class.”.php”;</em> 转义，然后判断它是否是一个文件，是就 include 。</p>
+<ul>
+<li>这里我们做一个调试，也就是上面 AutoLoad 里的这句话，<em>echo $file.”<br>“;    //这句话是为了调试使用</em> 我们把自动加载的文件路径打印出来。</li>
+</ul>
+<p>我在下面 new Momoma，并且调用 run 方法。</p>
+<p>去框架的入口文件 index.php 的最下面引入 核心文件 init.php ：（一定要在<em>“filp/whoops”</em>之后引入，不然错误信息没法提示了。因为如果你在之前引入，程序出了问题，程序执行不到<em>“filp/whoops”</em>了）</p>
+<pre><code>require_once MOMOMA_PATH . &#39;/core/init.php&#39;; //引入框架核心文件
+</code></pre><p>这时候你打开浏览器，访问 index.php 屏幕上会出现：</p>
+<pre><code>/data/momoma/core/momoma/Momoma.php
+框架核心入口
+</code></pre><p>说明 程序执行了 <em>include(“/data/momoma/core/momoma/Momoma.php”);</em> 并且成功调用了 <em>$momoma-&gt;run();</em> 方法，打印出了“框架核心入口”。</p>
+<p>文字叙述好无力呀，来张图表述一下当前目录结构：</p>
+<p><img src="https://ojv5ow1um.qnssl.com/20170119.jpg" alt="image"></p>
+<p>还是图片来的直观明了…</p>
+<p>突然听到一阵呐喊，还是在激动的诉说什么？是Childs的 <a href="http://music.163.com/#/song?id=25731499" target="_blank" rel="external">Ian P</a> 大约6分钟左右用了EVA裏面asuka的台词：妈妈 妈妈我被选上了 我被选为担任操作保护人类的eva驾驶员 是世界第一哦 这件事我还没告诉别人 不过我只告诉妈妈 那的人对我都很好 所以 我一点也不寂寞 因此 即使没有爸爸也没关系 我一点也不寂寞 所以妈妈 看看我吧</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-01-19T09:22:37.000Z" itemprop="datePublished">2017-01-19</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="如何写一个自己的渣渣PHP框架（2）" data-title="如何写一个自己的渣渣PHP框架（2）" data-url="https://www.opqnext.com/2017/01/19/如何写一个自己的渣渣PHP框架（2）/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"opqnext"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
