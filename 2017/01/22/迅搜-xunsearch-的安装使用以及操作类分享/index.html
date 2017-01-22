@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>迅搜(xunsearch)的安装使用以及操作类分享 | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      迅搜(xunsearch)的安装使用以及操作类分享
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>搜索到这篇文章的人大多都应该已经知道 <a href="http://www.xunsearch.com/" target="_blank" rel="external">迅搜(xunsearch)</a> 是什么。</p>
+<blockquote>
+<p>迅搜(xunsearch)是采用 C/C++ 基于 xapian 和 scws 开发的全文搜索引擎解决方案,适用于php全文检索、mysql全文检索和各种站内搜索。</p>
+</blockquote>
+<p>我原来做了一个小站，抓了很多很多文章，放到mysql中进行 like 搜索的效率是很低很低的，所以考虑了用迅搜，搜索引擎中只存了文章id、标题、tag、描述、文章分类、然后根据索引的文章id再到 mysql 读取文章内容。原来用了 RPC ，后来就没有那么多机器了 😰😭😵 那直接来吧。</p>
+<p>先听一首 Jeremy Lim 的 <a href="http://music.163.com/#/song?id=29715175" target="_blank" rel="external">Into Ether (Original Mix)</a> 压压惊呐！</p>
+<p>我是在 CentOs 下进行安装的，其实迅搜的教程挺详细的。我只是简化了一下。吧？</p>
+<p>1.运行下面指令下载、解压安装包。</p>
+<pre><code>wget http://www.xunsearch.com/download/xunsearch-full-latest.tar.bz2
+</code></pre>
+<p><img src="https://ojv5ow1um.qnssl.com/xunsearch001.png" alt="下载"></p>
+<p>2.进入xunsearch-full-1.4.9目录，执行setup.sh文件</p>
+<pre><code>./setup.sh		//执行安装命令
+</code></pre>
+<p>默认安装目录：/usr/local/xunsearch</p>
+<p>3.安装完成：</p>
+<pre><code>vim /etc/rc.d/rc.local     //添加开机启动
+/usr/local/xunsearch/bin/xs-ctl.sh -b inet  restart 	//将此命令写入开机启动
+</code></pre>
+<p>搜索系统将所有数据保存在 /usr/local/xunsearch/data 目录中。如果您希望数据目录另行安排或转移至其它分区，请将 /usr/local/xunsearch/data 作为软链接指向真实目录。<br>
+软连接到：/data/xunsearch/data</p>
+<pre><code>ln -s /data/xunsearch/data	/usr/local/xunsearch/data
+</code></pre>
+<p><img src="https://ojv5ow1um.qnssl.com/xunsearch002.png" alt="软连接"></p>
+<p>Info: 出于性能和多数需求考虑 xunsearch 服务端和 SDK API 通讯时没有加密和验证处理， 并且默认情况 <a href="http://xs-ctl.sh" target="_blank" rel="external">xs-ctl.sh</a> 启动的服务程序是绑定并监听在 127.0.0.1 上。</p>
+<p><em>如果您的 SDK 调用和 xunsearch 服务端不在同一服务器，请使用 -b inet 方式启动脚本，</em> 并注意借助类似 iptables 的防火墙来控制 xunsearch 的 8383/8384 两个端口的访问权限。 启动脚本用法举例如下，以下均为合法使用方式：</p>
+<ul>
+<li>bin/xs-ctl.sh -b local start    // 监听在本地回环地址 127.0.0.1 上</li>
+<li>bin/xs-ctl.sh -b inet start     // 监听在所有本地 IP 地址上</li>
+<li>bin/xs-ctl.sh -b a.b.c.d start  // 监听在指定 IP 上</li>
+<li>bin/xs-ctl.sh -b unix start     // 分别监听在 tmp/indexd.sock 和 tmp/searchd.sock</li>
+</ul>
+<p>4.启动讯搜服务：</p>
+<pre><code>/usr/local/xunsearch/bin/xs-ctl.sh start
+</code></pre>
+<p><img src="https://ojv5ow1um.qnssl.com/xunsearch003.png" alt="启动"></p>
+<p>检测你的服务器是否符合讯搜的最低要求：(PHP执行)</p>
+<pre><code>php /usr/local/xunsearch/sdk/php/util/RequiredCheck.php
+</code></pre>
+<p>5.根据字段配置.ini文件</p>
+<p><a href="http://www.xunsearch.com/tools/iniconfig" target="_blank" rel="external">http://www.xunsearch.com/tools/iniconfig</a>参考文档项目配置详解内容。</p>
+<p>ini文件路径：/usr/local/xunsearch/sdk/php/app/article.ini</p>
+<pre><code>project.name = article
+project.default_charset = utf-8
+
+[id]
+type = id
+
+[title]
+type = title
+
+[desc]
+type = body
+
+[tags]
+index = both
+weight = 4
+
+[cate]
+index = both
+weight = 3
+</code></pre>
+<p>6.索引管理工具——Indexer（用PHP去执行sdk）</p>
+<ul>
+<li><em># 清空 demo 项目的索引数据</em><br>
+util/Indexer.php --clean demo</li>
+<li><em># 导入 JSON 数据文件 file.json 到 demo 项目</em><br>
+util/Indexer.php --source=json demo file.json</li>
+<li><em># 导入 MySQL 数据库的 dbname.tbl_post 表到 demo 项目中，并且平滑重建</em><br>
+util/Indexer.php --rebuild --source=mysql://root:pass@localhost/dbname --sql=“SELECT * FROM tbl_post” --project=demo</li>
+<li><em># 查看 demo 项目在服务端的相关信息</em><br>
+util/Indexer.php --info -p demo</li>
+<li><em># 强制刷新 demo 项目的搜索日志</em><br>
+util/Indexer.php --flush-log --project demo</li>
+<li><em># 强制停止重建</em><br>
+util/Indexer.php --stop-rebuild demo</li>
+</ul>
+<blockquote>
+<p>根据mysql导入数据<br>
+<em>#util/Indexer.php --rebuild --source=mysql://root:password@localhost/dbname --sql=“SELECT id,title,category,tags,description,cate_id,add_time FROM gzy_article” --project=article</em></p>
+</blockquote>
+<p>操作类详见github： <a href="https://github.com/auto0010/xunsearch" target="_blank" rel="external">https://github.com/auto0010/xunsearch</a></p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-01-22T04:03:25.000Z" itemprop="datePublished">2017-01-22</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="迅搜-xunsearch-的安装使用以及操作类分享" data-title="迅搜(xunsearch)的安装使用以及操作类分享" data-url="https://www.opqnext.com/2017/01/22/迅搜-xunsearch-的安装使用以及操作类分享/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"opqnext"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>

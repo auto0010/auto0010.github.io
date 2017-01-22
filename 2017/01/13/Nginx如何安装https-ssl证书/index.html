@@ -85,7 +85,7 @@
 <ul>
 <li>那就开始安装吧</li>
 </ul>
-<p>将域名 www.opqnext.com 的证书文件1 <em>www.opqnext.com</em> bundle.crt 、私钥文件2_www.opqnext.com.key保存到同一个目录，例如/usr/local/nginx/conf目录下。</p>
+<p>将域名 <a href="http://www.opqnext.com">www.opqnext.com</a> 的证书文件1 <em><a href="http://www.opqnext.com">www.opqnext.com</a></em> bundle.crt 、私钥文件2_www.opqnext.com.key保存到同一个目录，例如/usr/local/nginx/conf目录下。</p>
 <p>更新Nginx根目录下 conf/nginx.conf 文件如下：</p>
 <pre><code>server {
         listen 443;
@@ -102,7 +102,8 @@
             index  index.html index.htm;
         }
     }
-</code></pre><table>
+</code></pre>
+<table>
 <thead>
 <tr>
 <th>配置文件参数</th>
@@ -144,34 +145,42 @@
 <p>报错如下：</p>
 <pre><code>nginx: [emerg] unknown directive &quot;ssl&quot; in /usr/local/nginx/conf/vhost/blog.com.conf:5
 nginx: configuration file /usr/local/nginx/conf/nginx.conf test failed
-</code></pre><p>出现这个错误说明没有将ssl模块编译进nginx，在configure的时候加上“–with-http_ssl_module”即可</p>
+</code></pre>
+<p>出现这个错误说明没有将ssl模块编译进nginx，在configure的时候加上“–with-http_ssl_module”即可</p>
 <p>详细一点：</p>
 <blockquote>
-<p>#下载你当前版本的nginx包，并且解压 进到目录<br>./configure –with-http_ssl_module</p>
-<p>#切记千万不要make install 那样就覆盖安装了<br>make</p>
-<p>#将原来的nginx备份 备份之前先kill当前正在启动的nginx<br>cp /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx.bak</p>
-<p>#make之后会在当前目录生成 objs 目录<br>cp objs/nginx /usr/local/nginx/sbin/nginx</p>
-<p>#然后重新启动nginx<br>/usr/local/nginx/sbin/nginx</p>
+<p>#下载你当前版本的nginx包，并且解压 进到目录<br>
+./configure --with-http_ssl_module<br>
+#切记千万不要make install 那样就覆盖安装了<br>
+make<br>
+#将原来的nginx备份 备份之前先kill当前正在启动的nginx<br>
+cp /usr/local/nginx/sbin/nginx /usr/local/nginx/sbin/nginx.bak<br>
+#make之后会在当前目录生成 objs 目录<br>
+cp objs/nginx /usr/local/nginx/sbin/nginx<br>
+#然后重新启动nginx<br>
+/usr/local/nginx/sbin/nginx</p>
 </blockquote>
 <ul>
 <li>问题2：http 转到 https</li>
 </ul>
 <p>据说是有加rewrite的方法：</p>
 <pre><code>rewrite ^/(.*)$ http://domain.com/$1 permanent;
-</code></pre><p>但是好像现在nginx新版本已经换了种写法：</p>
+</code></pre>
+<p>但是好像现在nginx新版本已经换了种写法：</p>
 <pre><code>server {
-    listen      80;
-    server_name    www.opqnext.com;
-    return      301 https://$server_name$request_uri;
+	listen	  80;
+	server_name    www.opqnext.com;
+	return	  301 https://$server_name$request_uri;
 }
 
 server {
-    listen      443 ssl;
-    server_name    www.opqnext.com;
+	listen	  443 ssl;
+	server_name    www.opqnext.com;
 
-    [....]
+	[....]
 }
-</code></pre><p>反正这种方法挺好使，然后重启 nginx 终于完成了！</p>
+</code></pre>
+<p>反正这种方法挺好使，然后重启 nginx 终于完成了！</p>
 <ul>
 <li>问题3：为什么你的网站已经是https了，但是在浏览器上还是不绿</li>
 </ul>

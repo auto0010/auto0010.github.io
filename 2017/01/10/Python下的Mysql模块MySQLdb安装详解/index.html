@@ -88,26 +88,39 @@ Traceback (most recent call last):
   File &quot;get_cnblogs_news.py&quot;, line 9, in &lt;module&gt;
     import MySQLdb
 ImportError: No module named MySQLdb
-</code></pre><p>这时我们就不得不安装MySQLdb包了。安装其实也挺简单，具体步骤如下：</p>
-<p> 1、下载 MySQL for Python<br>地址：<a href="http://sourceforge.net/projects/mysql-python/files/mysql-python/" target="_blank" rel="external">http://sourceforge.net/projects/mysql-python/files/mysql-python/</a><br>我这里安装的是1.2.3版本</p>
+</code></pre>
+<p>这时我们就不得不安装MySQLdb包了。安装其实也挺简单，具体步骤如下：</p>
+<p>1、下载 MySQL for Python<br>
+地址：<a href="http://sourceforge.net/projects/mysql-python/files/mysql-python/" target="_blank" rel="external">http://sourceforge.net/projects/mysql-python/files/mysql-python/</a><br>
+我这里安装的是1.2.3版本</p>
 <pre><code>wget http://sourceforge.net/projects/mysql-python/files/
 mysql-python/1.2.3/MySQL-python-1.2.3.tar.gz
-</code></pre><p>2、解压</p>
+</code></pre>
+<p>2、解压</p>
 <pre><code>tar zxvf MySQL-python-1.2.3.tar.gz
-</code></pre><p>3、安装</p>
+</code></pre>
+<p>3、安装</p>
 <pre><code>cd MySQL-python-1.2.3
 python setup.py build
 python setup.py install
-</code></pre><blockquote>
-<p>==注意：==<br>如果在执行：python setup.py build 遇到以下错误：</p>
+</code></pre>
+<blockquote>
+<p>==注意：==<br>
+如果在执行：python <a href="http://setup.py" target="_blank" rel="external">setup.py</a> build 遇到以下错误：</p>
 </blockquote>
 <pre><code>EnvironmentError: mysql_config not found
-</code></pre><p>首先查找mysql_config的位置，使用<br>find / -name mysql_config ，比如我的在/usr/local/mysql/bin/mysql_config<br>修改==setup_posix.py==文件，在26行：<br>mysql_config.path = “mysql_config” 修改为：</p>
+</code></pre>
+<p>首先查找mysql_config的位置，使用<br>
+find / -name mysql_config ，比如我的在/usr/local/mysql/bin/mysql_config<br>
+修改==setup_posix.py==文件，在26行：<br>
+mysql_config.path = “mysql_config” 修改为：</p>
 <pre><code>mysql_config.path = “/usr/local/mysql/bin/mysql_config”
-</code></pre><p>保存后，然后再次执行：</p>
+</code></pre>
+<p>保存后，然后再次执行：</p>
 <pre><code>python setup.py build
 python setup.py install
 </code></pre>
+
 	</div>
 	<div class="meta split">
 		<time class="post-date" datetime="2017-01-10T09:38:14.000Z" itemprop="datePublished">2017-01-10</time>

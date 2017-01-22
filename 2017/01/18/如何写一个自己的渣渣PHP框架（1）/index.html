@@ -88,13 +88,14 @@
 <p>算了，写到哪里算哪里吧。（你猜这是不是一个好习惯呢）</p>
 <p>好，本文最终写作目的只是给大家动力，诱惑大家拿起笔来（不，键盘来），写个框架。毛主席说了，一起阻碍你写框架的主义都是纸老虎，哪怕有人说你重复造轮子，哪怕有人说你写的就是个渣，哪怕有人说你没什么卵用。哪怕有人说你傅文佩，你不是人，你有本事抢男人，你别躲在里面不出声，我知道你在家。</p>
 <p>–前言</p>
-<p>先再听一首不可撤销的 <a href="http://music.163.com/#/song?id=29747620" target="_blank" rel="external">女孩儿</a> 压压惊！我原来写过一个小框架，渣的一比，是我奇哥教我的，不是我奇哥教的不好，是我菜的不行，后来每天好好学习，天天向上，终于深得要领，发现了composer这个好东西。就像nodejs的npm包管理，就像python里的pip，还像什么语言里的什么什么，我就不得而知了，因为别的我比较不会..</p>
+<p>先再听一首不可撤销的 <a href="http://music.163.com/#/song?id=29747620" target="_blank" rel="external">女孩儿</a> 压压惊！我原来写过一个小框架，渣的一比，是我奇哥教我的，不是我奇哥教的不好，是我菜的不行，后来每天好好学习，天天向上，终于深得要领，发现了composer这个好东西。就像nodejs的npm包管理，就像python里的pip，还像什么语言里的什么什么，我就不得而知了，因为别的我比较不会…</p>
 <p>我们先来搞明白一个简单小框架的运行流程，index.php -&gt; 定义基础常量 -&gt; 引入配置文件 -&gt; 自动加载（重点）-&gt; 路由解析（重点）-&gt; MVC 大概类似的就是这样一个流程，然后加上composer，或者你需要的各种类库，一个轻量级，基础级的框架就诞生了，你可以取个简单响亮的名字。</p>
 <p>比如我天马行空认认真真想的 momoma 是不是很有几分姿色。（原来是叫 Yin ，后来改名了.）</p>
 <p><img src="https://ojv5ow1um.qnssl.com/20170010.jpg" alt="image"></p>
 <p>–开始</p>
 <p>搭建你的本地服务器。</p>
-<p>先从index.php入口文件来写吧。<br>新建一个目录，比如 /data/momoma ,然后新建一个index.php文件，ok 入口文件建好了，简直是好的开始就是成功的一半啊。</p>
+<p>先从index.php入口文件来写吧。<br>
+新建一个目录，比如 /data/momoma ,然后新建一个index.php文件，ok 入口文件建好了，简直是好的开始就是成功的一半啊。</p>
 <ul>
 <li>Composer 中文文档。【<a href="http://docs.phpcomposer.com/" target="_blank" rel="external">Composer 中文文档 | Composer 中文网</a>】</li>
 <li>Packagist 是主要的 composer 存储库。它集合了可以使用Composer安装的公共PHP包。【<a href="https://packagist.org/" target="_blank" rel="external">Packagist The PHP Package Repository</a>】</li>
@@ -117,16 +118,18 @@
     }
   }
 }
-</code></pre><p>composer.josn的其他参数大家自己了解一下，这里我只说require和repositories。</p>
+</code></pre>
+<p>composer.josn的其他参数大家自己了解一下，这里我只说require和repositories。</p>
 <ol>
-<li>require 的key值就是你需要告诉composer你的项目需要哪些包，value是对应包的版本号。比如我上面的，项目需要 php 并且版本应该大于等于 5.6.28 ，需要 “filp/whoops” 当前的最高版本（*号表示没有版本限制，默认当前最高版本），”hassankhan/config” 的 0.10.0 版本。目前就需要这些，这些包都是可以通过 <a href="https://packagist.org/" target="_blank" rel="external">Packagist.org</a> 搜索获取。（这些包的作用后续告诉大家）。</li>
+<li>require 的key值就是你需要告诉composer你的项目需要哪些包，value是对应包的版本号。比如我上面的，项目需要 php 并且版本应该大于等于 5.6.28 ，需要 “filp/whoops” 当前的最高版本（*号表示没有版本限制，默认当前最高版本），“hassankhan/config” 的 0.10.0 版本。目前就需要这些，这些包都是可以通过 <a href="https://packagist.org/" target="_blank" rel="external">Packagist.org</a> 搜索获取。（这些包的作用后续告诉大家）。</li>
 <li>repositories 我看过一篇帖子，说这样写的话，貌似是换成国内的源，更新下载包的时候速度会比较快一些。</li>
 </ol>
 <p>然后 命令行模式去目录下执行 composer install 目录中会多出一个 vendor 目录和 composer.lock 文件，composer安装（停顿一下）包有两种方法，我每次在require增加新的包，就直接执行 composer update 就OK了。虽然我可能说的比较混乱，但是这不是今天的重点，你先去google、百度，回头再说composer。嗯，就这么愉快的决定了。</p>
 <p>在index.php里引入自动加载文件</p>
 <pre><code>// Autoload 自动载入
-require &#39;vendor/autoload.php&#39;;
-</code></pre><p>ps:现在说说上面的那个两个包。</p>
+require 'vendor/autoload.php';
+</code></pre>
+<p>ps:现在说说上面的那个两个包。</p>
 <ul>
 <li>“filp/whoops”</li>
 </ul>
@@ -137,27 +140,32 @@ require &#39;vendor/autoload.php&#39;;
 $whoops = new \Whoops\Run;
 $whoops-&gt;pushHandler(new \Whoops\Handler\PrettyPageHandler);
 $whoops-&gt;register();
-</code></pre><p>然后我们故意制造一个错误：(用2除以0)</p>
+</code></pre>
+<p>然后我们故意制造一个错误：(用2除以0)</p>
 <pre><code>echo 2/0;
-</code></pre><p>访问一下你的 index.php 是不是出现了报错信息：<br><img src="https://ojv5ow1um.qnssl.com/whoops.jpg" alt="image"></p>
+</code></pre>
+<p>访问一下你的 index.php 是不是出现了报错信息：<br>
+<img src="https://ojv5ow1um.qnssl.com/whoops.jpg" alt="image"></p>
 <ul>
 <li>“hassankhan/config”</li>
 </ul>
-<p>官网链接：<a href="https://packagist.org/packages/hassankhan/config" target="_blank" rel="external">“hassankhan/config”</a>里有详细介绍，是一款轻量级配置文件加载器，支持PHP，INI，XML，JSON和YAML文件。</p>
+<p>官网链接：<a href="https://packagist.org/packages/hassankhan/config" target="_blank" rel="external">&quot;hassankhan/config&quot;</a>里有详细介绍，是一款轻量级配置文件加载器，支持PHP，INI，XML，JSON和YAML文件。</p>
 <p><em>我们怎么用？</em></p>
-<p>在根目录先新建一个 config 目录，/data/momoma/config 下新建 conf.php (或者conf.josn 不是说过了，”hassankhan/config”支持php,josn等等文件)</p>
+<p>在根目录先新建一个 config 目录，/data/momoma/config 下新建 conf.php (或者conf.josn 不是说过了，&quot;hassankhan/config&quot;支持php,josn等等文件)</p>
 <p>在conf.php里写：(conf.json直接写json就可以了)</p>
 <pre><code>return [
     &quot;debug&quot;=&gt; true  // 是否开启调试模式
 ];
-</code></pre><p>回到index.php，定义项目根目录常量 MOMOMA_PATH，</p>
+</code></pre>
+<p>回到index.php，定义项目根目录常量 MOMOMA_PATH，</p>
 <pre><code>define(&quot;MOMOMA_PATH&quot;, dirname(__FILE__)); //项目根目录
 
 // Config
-$conf = new \Noodlehaus\Config(MOMOMA_PATH. &#39;/config/conf.php&#39;);
-echo $conf-&gt;get(&#39;debug&#39;);
-//echo $conf[&#39;debug&#39;];
-</code></pre><p>访问你的index.php有没有输出 1 不就是你的 debug的值 true 吗！</p>
+$conf = new \Noodlehaus\Config(MOMOMA_PATH. '/config/conf.php');
+echo $conf-&gt;get('debug');
+//echo $conf['debug'];
+</code></pre>
+<p>访问你的index.php有没有输出 1 不就是你的 debug的值 true 吗！</p>
 <p>如果这样，有了这个两个包，加个if判断，你看，你这不就可以通过配置文件来配置框架是否开启debug调试模式了。简直是厉害啦哇/(ㄒoㄒ)/~~</p>
 <p>写的好累呀，听一首刺猬乐队的 <a href="http://music.163.com/#/song?id=348107" target="_blank" rel="external">24小时摇滚聚会</a> 放松一下也不足为奇呐。</p>
 <p>你还等什么？不然开写吧…（哪怕没有我你长点心吧）</p>
