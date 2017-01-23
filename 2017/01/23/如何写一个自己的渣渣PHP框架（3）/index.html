@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>如何写一个自己的渣渣PHP框架（3） | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      如何写一个自己的渣渣PHP框架（3）
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>我想写个高级框架，却写了个渣渣框架。渣渣框架还能不能称得上是框架？</p>
+<p>看来只能听一首之前淘的Tom Day的 <a href="http://music.163.com/#/song?id=28702321" target="_blank" rel="external">Flemington</a> 压压惊了Q!</p>
+<p>上一篇的时候大概说了自动加载，然后我这几天就想啊想啊，想配置文件和路由。想了很多种方式，还是没有想好，没事。然而值得开心的是我终于写了我的二狗子say: “hello world” PHP扩展，并且成功编译安装！</p>
+<ul>
+<li>配置文件</li>
+</ul>
+<p>就说想了很久还是没想好嘛，所以我就在每一个类里建立一个成员变量，在构造函数里初始化他，先这样，我感觉好像是不好，这样的话相当于每个类里面都要实例化这个配置类了，搞一个单例模式，但是我还没想好。</p>
+<p>就像这样：</p>
+<pre><code>&lt;?php
+/**
+ * 框架核心类
+ * User: momoma
+ * Date: 2017/1/19
+ * Time: 上午10:52
+ */
+
+namespace core\momoma;
+use core\lib\Route;
+use Noodlehaus\Config;
+
+class Momoma {
+
+    private $controller;    //默认控制器
+    private $action;        //默认方法
+    private $conf;          //配置文件
+
+    public function __construct() {
+        $this-&gt;conf = new Config(MOMOMA_PATH. '/config/conf.php');
+    }
+}
+</code></pre>
+<p>你再想一个好办法。</p>
+<ul>
+<li>路由</li>
+</ul>
+<p>看了很多关于路由的内容，我们可以在框架里写自己的路由类，也可以直接去 nginx 里配置 rewrite 呀。你看，这样配置不是也挺好的。</p>
+<p><img src="https://ojv5ow1um.qnssl.com/rewrite.png" alt="rewrite"></p>
+<p>然后在 nginx 里配置：</p>
+<pre><code>rewrite ^/index.html$    /index.php last;
+rewrite ^/index.html$    /index.php?c=index&amp;a=index last;
+rewrite ^/product/([0-9]+).html$    /index.php?c=goods&amp;a=detail&amp;id=$1 last;
+rewrite ^/article/([0-9]+).html$    /index.php?c=special&amp;a=detail&amp;id=$1 last;
+rewrite ^/info/([0-9]+).html$    /index.php?c=article&amp;a=detail&amp;id=$1 last;
+</code></pre>
+<p>无论如何，路由就是如何根据 url 找到你所要访问的类和方法。</p>
+<p>框架里的路由，首先 <a href="https://packagist.org" target="_blank" rel="external">packagist</a> 有很多关于路由的包，也有的有很详细的介绍说明。</p>
+<ol>
+<li>比如 <a href="https://lvwenhan.com/php/406.html" target="_blank" rel="external">岁寒</a> 用的 <a href="https://packagist.org/packages/noahbuscher/macaw" target="_blank" rel="external">“noahbuscher/macaw”</a> 这个路由包，他博客里做了详细介绍。</li>
+<li>比如我 二狗子哥 用的 <a href="https://packagist.org/packages/nikic/fast-route" target="_blank" rel="external">“nikic/fast-route”</a> 这个路由包，我二狗子哥的博客写了两年了还没上线，😂 不然我狗子哥必定大显身手，介绍一番。</li>
+<li>还有我原来看的一个开源框架，initPHP框架的 <a href="http://www.initphp.com/3_3.htm" target="_blank" rel="external">路由说明</a> 和 <a href="https://github.com/zhuli/initphp/blob/master/initphp/init/dispatcher.init.php" target="_blank" rel="external">源码</a>。</li>
+</ol>
+<p>其实我还是喜欢去 nginx 里做 rewrite 配置，喜欢我的原始状态 <em>“index.php?c=index&amp;a=run&amp;id=1”</em> 多好看呐。（主要简单(=@__@=)呀！）</p>
+<p>也倒是哦，不然就先不说那么多的路由方式了，继续往下走。</p>
+<p>首先建立目录 /data/momoma/core/lib 在 lib 目录里建立 Route.php 类：(其实这个路由类在这里并没有什么卵用，因为我继续往下走了，下面我获取控制器和方法的时候已经跳过他了，你也可以暂时先跳过，或者不)</p>
+<pre><code>&lt;?php
+/**
+ * 路由类
+ * User: momoma
+ * Date: 2017/1/23
+ * Time: 上午11:03
+ */
+
+namespace core\lib;
+use Noodlehaus\Config;
+
+class Route {
+
+    private $conf;          //配置文件
+
+    public function __construct() {
+        $this-&gt;conf = new Config(MOMOMA_PATH. '/config/conf.php');
+    }
+
+    /**
+     * 路由的分发
+     */
+    public function dispatcher() {
+        switch ($this-&gt;conf-&gt;get('route')) {
+            case 'path' :
+                $request = $this-&gt;getRequest();
+                $this-&gt;parsePathUri($request);
+                break;
+
+            default :
+                return false;
+                break;
+        }
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRequest() {
+        return true;
+    }
+
+    /**
+     * @param $request
+     */
+    public function parsePathUri($request){
+
+    }
+
+}
+</code></pre>
+<p>这个路由类就是参考 initPHP框架的 <a href="https://github.com/zhuli/initphp/blob/master/initphp/init/dispatcher.init.php" target="_blank" rel="external">路由类 - github.com</a> 你可以看一下，也不用看懂，理解他大概是在干什么，他在框架是什么作用。大概这样？</p>
+<p>马上就要用到控制器了，有了路由（其实本篇完全没具体说路由）根据 url 就能找到控制器了，我们先建立一个控制器，然后再接着说如何找到他。</p>
+<p>建立目录 /data/momoma/controller 然后在 controller 里建立 IndexController.php 类:</p>
+<pre><code>&lt;?php
+
+/**
+ * Index控制器
+ * User: momoma
+ * Date: 2017/1/23
+ * Time: 下午3:44
+ */
+namespace controller;
+
+class IndexController {
+
+    public function run(){
+        echo &quot;我是 Index 制器的 run 方法&quot;;
+    }
+
+    public function demo(){
+        echo &quot;我是 Index 制器的 demo 方法&quot;;
+    }
+}
+</code></pre>
+<p>并且在 /data/config/conf.php 里加上默认控制器和方法配置：</p>
+<pre><code>return [
+    &quot;debug&quot;=&gt; true,
+    'controller' =&gt; 'Index',    // 默认控制器
+    'action' =&gt; 'run',          // 默认方法
+];
+
+
+</code></pre>
+<p>在类 Momoma 里，我们原来建立了核心入口 run 方法：</p>
+<pre><code>    /**
+     * 框架核心入口
+     */
+    public function run(){
+        // 路由分发功能
+        $route = new Route();
+        // 根据一些列的路由方法目的也是找到$_GET['c']和$_GET['a']
+        // 只不过方法更严谨，从 $_SERVER 里获取相应的内容
+        $route-&gt;dispatcher();
+        // 这里我们直接获取
+        $this-&gt;getRequest();
+        $class = &quot;\\controller\\&quot;.ucfirst($this-&gt;controller).&quot;Controller&quot;;
+        $obj = new $class();
+        $action = $this-&gt;action;
+        $obj-&gt;$action();
+    }
+
+    /**
+     * 获取controller和action
+     */
+    public function getRequest(){
+        $this-&gt;controller = isset($_GET['c']) ? $_GET['c'] : $this-&gt;conf-&gt;get('controller');
+        $this-&gt;action = isset($_GET['a']) ? $_GET['a'] : $this-&gt;conf-&gt;get('action');
+    }
+</code></pre>
+<p>就像 ☝️ 注释里我说的其实我用了最直接的方法获取了$_GET[‘c’]和$_GET[‘a’]，（貌似跳过了路由类的具体实现方式，没事，主要表达中心思想。）然后根据路径拼接出 IndexController ，建立控制的时候，就约定了使用驼峰式命名规则。你不用 include IndexController 因为他会自动加载的。</p>
+<p>这时候你访问 index.php 屏幕上就会出现:(如果你的自动加载打印路径还没注释的话)，因为配置文件里写了，默认访问 Index 控制器 里的 run 方法。</p>
+<p><img src="https://ojv5ow1um.qnssl.com/index.jpg" alt="index"></p>
+<p>访问 index.php?c=index&amp;a=demo 这个地址，当然就会出现:</p>
+<blockquote>
+<p>我是 Index 制器的 demo 方法</p>
+</blockquote>
+<p>再来一首Glow Curve发光曲线的 <a href="http://music.163.com/#/song?id=356752" target="_blank" rel="external">小雷音之歌</a> 表示本篇结束！</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-01-23T08:25:58.000Z" itemprop="datePublished">2017-01-23</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="如何写一个自己的渣渣PHP框架（3）" data-title="如何写一个自己的渣渣PHP框架（3）" data-url="https://www.opqnext.com/2017/01/23/如何写一个自己的渣渣PHP框架（3）/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"opqnext"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
