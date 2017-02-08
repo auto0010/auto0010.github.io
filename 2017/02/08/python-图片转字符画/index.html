@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>python 图片转字符画 | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      python 图片转字符画
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>虽然我PHP教程还没写完呢，我昨天试图写来着，后来又没写。😢</p>
+<p>我女朋友不知道为啥又生气了，昨天早上还好着呢，中午就生气了，到现在我还不知道为什么。😢</p>
+<p>没关系，我长大了，听一首不可撤销的 <a href="http://music.163.com/#/song?id=29747621" target="_blank" rel="external">启程</a> 压压惊。 😢</p>
+<p>我想我今天应该做点什么？起床洗头发，想啊想啊，做这个 python 图片转字符画。</p>
+<p>简单介绍一部分，后面贴代码和效果图。</p>
+<ul>
+<li>需要 PIL 库</li>
+</ul>
+<p>pip install pil 安装了半天安装不了，但是 pip search pil 确实搜索到了，找了半天，好像 pillow 和 pil 是一个东西。</p>
+<blockquote>
+<p>Pillow 是 PIL的对Python3支持的另外一个分支，当然他对Python2也兼容，由于PIL安装起来比较烦，而使用pip可以很轻松的安装Pillow，所以我选择Pillow使用，但是其核心还是PIL库的。</p>
+</blockquote>
+<ul>
+<li>灰度值</li>
+</ul>
+<blockquote>
+<p>灰度值：指黑白图像中点的颜色深度，范围一般从0到255，白色为255，黑色为0，故黑白图片也称灰度图像</p>
+</blockquote>
+<p>可以使用灰度值公式将像素的 RGB 值映射到灰度值：</p>
+<pre><code>gray = int(0.2126*r+0.7152*g+0.0722*b)
+</code></pre>
+<p>下面是完整的代码：</p>
+<pre><code># -*- coding: utf-8 -*-
+# by opqnext.com, 2017.02.08
+from PIL import Image
+import argparse
+
+# 接收参数
+parser = argparse.ArgumentParser()
+
+parser.add_argument('file')
+parser.add_argument('-o', '--output')
+parser.add_argument('--width', type=int, default=80)
+parser.add_argument('--height', type=int, default=80)
+
+args = parser.parse_args()
+
+IMG = args.file
+WIDTH = args.width
+HEIGHT = args.height
+OUTPUT = args.output
+
+ascii_char = list(&quot;$@B%8&amp;WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~&lt;&gt;i!;:,\&quot;^`'.&quot;)
+
+def get_char(r, b, g, alpha=256):
+    if alpha == 0:
+        return ''
+    length = len(ascii_char)
+    gray = int(0.2126*r+0.7152*g+0.0722*b)
+
+    unit = (256.0+1)/length
+    return ascii_char[int(gray/unit)]
+
+if __name__ == '__main__':
+    im = Image.open(IMG)
+    im = im.resize((WIDTH, HEIGHT), Image.NEAREST)
+    txt = &quot;&quot;
+    for i in range(HEIGHT):
+        for j in range(WIDTH):
+            txt += get_char(*im.getpixel((j, i)))
+        txt += '\n'
+
+    print txt
+</code></pre>
+<p>然后截取一张效果图，一目了然，你在做的东西是什么？</p>
+<p><img src="https://ojv5ow1um.qnssl.com/pillow.png" alt="魔镜啊魔镜"></p>
+<p>魔镜啊，魔镜呐，你说…</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-02-08T08:23:41.000Z" itemprop="datePublished">2017-02-08</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	
+<div class="ds-thread" data-thread-key="python-图片转字符画" data-title="python 图片转字符画" data-url="https://www.opqnext.com/2017/02/08/python-图片转字符画/"></div>
+<script type="text/javascript">
+
+var duoshuoQuery = {short_name:"opqnext"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+</script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
