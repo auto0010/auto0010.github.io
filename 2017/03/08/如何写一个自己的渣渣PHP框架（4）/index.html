@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>如何写一个自己的渣渣PHP框架（4） | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      如何写一个自己的渣渣PHP框架（4）
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>已经创建了 IndexController 并且这个时候也可以根据不同的 url 来访问不同控制器的不同方法…</p>
+<p>现在加一个控制器的基类，Controller 在/data/momoma/core下创建一个目录 controller 并且在该目录下创建一个类 BaseController.php</p>
+<pre><code>&lt;?php
+/**
+ * Created by PhpStorm.
+ * User: momoma
+ * Date: 2017/3/8
+ * Time: 下午4:22
+ */
+namespace core\controller;
+
+class BaseController {
+
+    /**
+     * 控制器 重定向
+     * @param string  $url   跳转的URL路径
+     * @param int     $time  多少秒后跳转
+     */
+    public function redirect($url, $time = 0) {
+        if (!headers_sent()) {
+            if ($time === 0) header(&quot;Location: &quot;.$url);
+            header(&quot;refresh:&quot; . $time . &quot;;url=&quot; .$url. &quot;&quot;);
+        } else {
+            exit(&quot;&lt;meta http-equiv='Refresh' content='&quot; . $time . &quot;;URL=&quot; .$url. &quot;'&gt;&quot;);
+        }
+    }
+
+    /**
+     *	数据基础验证-是否是Email 验证：xxx@qq.com
+     *  Controller中使用方法：$this-&gt;is_email($value)
+     * 	@param  string $value 需要验证的值
+     *  @return bool
+     */
+    public function is_email($value) {
+        return preg_match('/^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/', trim($value));
+    }
+}
+</code></pre>
+<blockquote>
+<p>这个基类可以做什么？</p>
+</blockquote>
+<p>你所有的业务层上的 controller 所要继承的功能都可以写，你也可以在 /data/momoma/core/controller/ 这个目录里建立若干类，依次继承。功能比如 redirect，is_email 验证 email 当然你可以写很多的东西，或者接收参数并且过滤：</p>
+<pre><code>  /**
+   * 获取参数 如果是GET $type == 'G'
+   * @param $value
+   * @param $type
+   * @return string
+   */
+  public function getParams($value,$type) {
+      if($type == 'G') {
+          return $this-&gt;filter_str($_GET[$value]);
+      } elseif($type == 'P') {
+          return $this-&gt;filter_str($_POST[$value]);
+      }
+  }
+
+  /**
+   * 安全过滤类-字符串过滤 过滤特殊有危害字符
+   *  Controller中使用方法：$this-&gt;controller-&gt;filter_str($value)
+   * @param  string $value 需要过滤的值
+   * @return string
+   */
+  public function filter_str($value) {
+      $value = str_replace(array(&quot;\0&quot;,&quot;%00&quot;,&quot;\r&quot;), '', $value);
+      $value = preg_replace(array('/[\\x00-\\x08\\x0B\\x0C\\x0E-\\x1F]/','/&amp;(?!(#[0-9]+|[a-z]+);)/is'), array('', '&amp;amp;'), $value);
+      $value = str_replace(array(&quot;%3C&quot;,'&lt;'), '&amp;lt;', $value);
+      $value = str_replace(array(&quot;%3E&quot;,'&gt;'), '&amp;gt;', $value);
+      $value = str_replace(array('&quot;',&quot;'&quot;,&quot;\t&quot;,'  '), array('&amp;quot;','&amp;#39;','    ','&amp;nbsp;&amp;nbsp;'), $value);
+      return $value;
+  }
+</code></pre>
+<p>然后你的业务层的控制器，比如你上次建立的文件 IndexController 或者你将来要建立的各种 ArticleController AdminController 等等。</p>
+<p>你就可以这样使用，首先继承 BaseController</p>
+<pre><code>/**
+ * Index控制器
+ * User: momoma
+ * Date: 2017/1/23
+ * Time: 下午3:44
+ */
+namespace controller;
+use core\controller\BaseController;
+
+class IndexController extends BaseController {
+
+    public function run(){
+        echo &quot;我是 Index 制器的 run 方法&quot;;
+
+        // 接收参数
+        $username = $this-&gt;getParams('name','G');
+        $password = $this-&gt;getParams('pwd','P');
+        $email = $this-&gt;getParams('email','P');
+
+        // 验证邮箱
+        if (!$this-&gt;is_email($email)){
+            echo &quot;邮箱格式不正确&quot;;
+        }
+        // 重定向
+        $this-&gt;redirect('/index.php?c=demo');
+    }
+
+    public function demo(){
+        echo &quot;我是 Index 制器的 demo 方法&quot;;
+    }
+}
+</code></pre>
+<p>控制器的基类完成了，然后就可以写view层了…</p>
+<p>下一篇写…</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-03-08T08:51:27.000Z" itemprop="datePublished">2017-03-08</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	<!-- 代码1：放在页面需要展示的位置  -->
+<!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="如何写一个自己的渣渣PHP框架（4）"></div> -->
+
+<!--PC版-->
+<div id="SOHUCS" sid="如何写一个自己的渣渣PHP框架（4）"></div>
+<script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
+<script type="text/javascript">
+window.changyan.api.config({
+appid: 'cysOwxxqK',
+conf: 'prod_879976e0282741cfc2efb86588958657'
+});
+</script>
+
+<!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+<!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+<!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cysxwRiW1"></script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
