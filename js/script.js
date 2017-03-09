@@ -88,9 +88,9 @@
 
         var bannerNode = $('.top-image');
         if(bannerNode.data('enable')){
-            var banner = [1,2,3,4,5,6,9,10,11];
+            var banner = [3,4,6,9,10,11];
             var index = parseInt((Math.random() * banner.length));
-            console.log(banner.length,index);
+            //console.log(banner.length,index);
             bannerNode.attr('style','background-image:url(https://ojv5ow1um.qnssl.com/'+banner[index]+'.jpg)');
             //bannerNode.attr('style','background-image:url(/banner/'+index+'.jpg)');
         }
