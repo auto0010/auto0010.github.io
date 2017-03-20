@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <title>FastCgi 和 php-fpm 之间的... | 郭贰小姐的博客 - opqnext.com</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    
+      <link rel="icon" href="/favicon.png">
+    
+
+    <link rel="stylesheet" href="/css/style.css">
+
+    <link rel="stylesheet" href="/js/google-code-prettify/download.css">
+
+  </head>
+
+  <body>
+
+<header>
+	<a id="logo" href="/" title="郭贰小姐的博客 - opqnext.com">
+	<img src="/favicon.png" alt="郭贰小姐的博客 - opqnext.com"></a>
+	
+	
+		<!--搜索栏-->
+		<i class="js-toggle-search iconfont icon-search"></i>
+
+
+<form class="js-search search-form search-form--modal" method="get" action="https://baidu.com" role="search">
+	<div class="search-form__inner">
+		<div>
+			<i class="iconfont icon-search"></i>
+			<input class="text-input" placeholder="Enter Key..." type="search">
+		</div>
+	</div>
+</form>
+	
+
+	
+		<!--侧边导航栏-->
+		<a id="nav-toggle" href="#"><span></span></a>
+
+<nav>
+	<div class="menu-top-container">
+		<ul id="menu-top" class="menu">
+			
+				
+				<li class="current-menu-item">
+					<a href="http://weibo.com/u/1825272441" target="_blank">Weibo</a>
+				</li>
+			
+		</ul>
+	</div>
+</nav>
+	
+
+</header>
+<div class="m-header ">
+	<section id="hero1" class="hero">
+		<div class="inner">
+		</div>
+	</section>
+	
+		<figure class="top-image" data-enable=true></figure>
+	
+</div>
+
+<!--文章列表-->
+<div class="wrapper">
+  
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      FastCgi 和 php-fpm 之间的...
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>CGI是外部应用程序（CGI程序）与WEB服务器之间的接口标准，是在CGI程序和Web服务器之间传递信息的过程。</p>
+<p>web server (比如 nginx 或者 apache) 只是内容的分发者：</p>
+<ul>
+<li>用户通过浏览器访问 html 静态文件，那么 web server 就会去目录中找到这个文件，返回给浏览器，浏览器解析文件展现给用户。</li>
+<li>用户访问的是 php 文件，根据 nginx 配置，nginx 知道他处理不了这个请求，所以他会去 9000 端口找 php 让 php 来处理，同时 nginx 会传递 url，get/post的数据，http header头 等等，<strong>CGI</strong> 就是要规定传什么样的数据，以什么样的格式来传递给 PHP 的一个标准或者协议。</li>
+</ul>
+<p>当 web server 收到了 php 文件的请求之后，会启动对应的 CGI 程序，这里就是 php 的解析器。然后 php 的解析器会首先解析 php.ini ，根据 ini 的配置初始化执行环境，接收参数执行处理，然后再以 CGI 规定的标准格式把处理后的数据返回给 web server （这里返回的就是 html ），然后这个进程就会结束掉。接下来 web server 再把这个结果返回给浏览器。</p>
+<p><em>CGI 是个协议，跟进程什么的没关系。</em></p>
+<h6 id="fastcgi-是什么-？"><a class="header-anchor" href="#fastcgi-是什么-？">¶</a>FastCgi 是什么 ？</h6>
+<p>FastCgi 是用来提高 CGI 程序性能的。</p>
+<p>那 CGI 程序性能有什么问题呢？标准的 CGI 在用户每个请求中，php解析器都会先解析 php.ini ，初始化执行环境，处理完成后又会关闭这个进程。所以处理的时间就会比较长</p>
+<p>而优化之后的 FastCgi，fastCgi 会先启一个 master，解析配置文件，初始化执行环境，然后再启动多个 worker。当请求过来时，master 会传递给一个 worker，然后立即可以接受下一个请求。这样就避免了重复的劳动，效率自然是高。而且当 worker 不够用时，master 可以根据配置预先启动几个 worker 等着；当然空闲 worker 太多时，也会停掉一些，这样就提高了性能，也节约了资源。这就是 fastCgi 对进程的管理。</p>
+<h6 id="php-fpm-是什么-？"><a class="header-anchor" href="#php-fpm-是什么-？">¶</a>php-fpm 是什么 ？</h6>
+<p>php-fpm 是一个实现了 FastCgi 的程序，被 PHP 官方收录。</p>
+<p>PHP 的解释器是 php-cgi，它只是个 CGI 程序，只能解析请求，返回结果，不会进程管理。所以就出现了一些能够调度 php-cgi 进程的程序，比如说由 lighthttpd 分离出来的 spawn-fcgi。php-fpm 也是这么个东西，在长时间的发展后，逐渐得到了大家的认可，也越来越流行。</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-03-20T10:29:31.000Z" itemprop="datePublished">2017-03-20</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	<!-- 代码1：放在页面需要展示的位置  -->
+<!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="FastCgi 和 php-fpm 之间的..."></div> -->
+
+<!--PC版-->
+<div id="SOHUCS" sid="FastCgi 和 php-fpm 之间的..."></div>
+<script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
+<script type="text/javascript">
+window.changyan.api.config({
+appid: 'cysOwxxqK',
+conf: 'prod_879976e0282741cfc2efb86588958657'
+});
+</script>
+
+<!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+<!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+<!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cysxwRiW1"></script>
+
+
+  
+</div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
+
+
+
+
+
+<div class="fat-footer">
+	<div class="wrapper">
+		<div class="layout layout--center">
+			<div class="layout__item palm-mb">
+				<div class="media">
+					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<div class="media__body">
+						<h4>郭贰小姐</h4>
+						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
+					</div>
+				</div>
+				<div class="author-contact">
+					<ul>
+						
+							
+							<li>
+				        		<a href="http://weibo.com/u/1825272441" target="_blank">
+				        			
+				        				<i class="iconfont icon-weibo"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://github.com/auto0010" target="_blank">
+				        			
+				        				<i class="iconfont icon-github"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+							
+							<li>
+				        		<a href="https://www.zhihu.com/people/guo-er-xiao-jie-41" target="_blank">
+				        			
+										<i class="iconfont icon-zhihu"></i>
+				        			
+				        		</a>
+				        	</li>
+						
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<footer class="footer" role="contentinfo">
+	<div class="wrapper wrapper--wide split split--responsive">
+		<span>Theme by <a href="http://github.com/yumemor">Yumemor</a>. Powered by <a href="http://hexo.io">Hexo</a> | &copy 2017 郭贰小姐</span>
+	</div>
+</footer>
+
+	<!-－这里导入了 lib.js 里面涵盖了 jQuery 等框架 所以注释掉-->
+	<!--<script src="http://lib.sinaapp.com/js/jquery/2.0/jquery.min.js"></script>-->
+	<script src="/js/lib.js"></script>
+	<script src="/js/google-code-prettify/prettify.js"></script>
+	<script src="/js/module.js"></script>
+	<script src="/js/script.js"></script>
+	<script type='text/javascript'>
+		//代码高亮
+		$(document).ready(function(){
+	 		$('pre').addClass('prettyprint linenums').attr('style', 'overflow:auto;');
+   			prettyPrint();
+		});
+	</script>
+	<!--baidu-->
+
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?5c399a6571456ab7f05e2c4dc81303fe";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+
+	</body>
+</html>
