@@ -197,7 +197,7 @@ class Momoma {
 <li>路由</li>
 </ul>
 <p>看了很多关于路由的内容，我们可以在框架里写自己的路由类，也可以直接去 nginx 里配置 rewrite 呀。你看，这样配置不是也挺好的。</p>
-<p><img src="https://ojv5ow1um.qnssl.com/rewrite.png" alt="rewrite"></p>
+<p><img src="https://image.opqnext.com/rewrite.png" alt="rewrite"></p>
 <p>然后在 nginx 里配置：</p>
 <pre><code>rewrite ^/index.html$    /index.php last;
 rewrite ^/index.html$    /index.php?c=index&amp;a=index last;
@@ -328,7 +328,7 @@ class IndexController {
 </code></pre>
 <p>就像 ☝️ 注释里我说的其实我用了最直接的方法获取了$_GET[‘c’]和$_GET[‘a’]，（貌似跳过了路由类的具体实现方式，没事，主要表达中心思想。）然后根据路径拼接出 IndexController ，建立控制器的时候，就约定了使用驼峰式命名规则。你不用 include IndexController 因为他会自动加载的。</p>
 <p>这时候你访问 index.php 屏幕上就会出现:(如果你的自动加载打印路径还没注释的话)，因为配置文件里写了，默认访问 Index 控制器 里的 run 方法。</p>
-<p><img src="https://ojv5ow1um.qnssl.com/index.jpg" alt="index"></p>
+<p><img src="https://image.opqnext.com/index.jpg" alt="index"></p>
 <p>访问 index.php?c=index&amp;a=demo 这个地址，当然就会出现:</p>
 <blockquote>
 <p>我是 Index 制器的 demo 方法</p>
@@ -386,7 +386,7 @@ conf: 'prod_879976e0282741cfc2efb86588958657'
 		<div class="layout layout--center">
 			<div class="layout__item palm-mb">
 				<div class="media">
-					<img class="headimg" src='https://ojv5ow1um.qnssl.com/logo.jpg' alt='郭贰小姐'>
+					<img class="headimg" src='https://image.opqnext.com/logo.jpg' alt='郭贰小姐'>
 					<div class="media__body">
 						<h4>郭贰小姐</h4>
 						<p class='site-description'>如此生活三十年，直到大厦崩塌</p>
