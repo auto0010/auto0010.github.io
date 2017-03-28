@@ -85,7 +85,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>archive_a: 2017/3 | 郭贰小姐的博客 - opqnext.com</title>
+    <title>狗子哥的PHP异步“高”性能延时队列 | 郭贰小姐的博客 - opqnext.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <meta name="keywords" content="郭贰小姐, PHP, 技术博客, PHP框架, 郭贰小姐的博客, opqnext, 摇滚青年" />
@@ -155,54 +155,89 @@
 <!--文章列表-->
 <div class="wrapper">
   
-    <ul class="posts-list mb+ js-posts">
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-            <i class="post-status iconfont icon-icon"></i>  
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/03/28/狗子哥的PHP异步“高”性能延时队列/">狗子哥的PHP异步“高”性能延时队列</a></span>
-            <time class="post-time" datetime="2017-03-28T07:25:32.000Z" itemprop="datePublished">2017-03-28</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/03/20/FastCgi-和-php-fpm-之间的/">FastCgi 和 php-fpm 之间的...</a></span>
-            <time class="post-time" datetime="2017-03-20T10:29:31.000Z" itemprop="datePublished">2017-03-20</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/03/08/如何写一个自己的渣渣PHP框架（4）/">如何写一个自己的渣渣PHP框架（4）</a></span>
-            <time class="post-time" datetime="2017-03-08T08:51:27.000Z" itemprop="datePublished">2017-03-08</time>
-          </h2>
-        </li>
-      
-    </ul>
-    
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      狗子哥的PHP异步“高”性能延时队列
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>“丑八怪哎~~~，能否别把灯打开”。狗子哥每天早上起床第一件事就是唱歌，突然有一天狗子哥没有唱歌，我们纷纷都很奇怪，没过一会儿，狗子哥竟然，竟然吟诗了…</p>
+<p><img src="https://image.opqnext.com/emoji/emoji-001.jpg" alt="三观"></p>
+<p>额，我们的三观…</p>
+<p>狗子哥说他写了一个《PHP异步高性能延时队列》，想发到自己的博客里，可是狗子哥的博客搭了快3年了，还是没搭起来。因为敌军还有30秒到达战场。PS:链接：<a href="http://wocaole.cn" target="_blank" rel="external">狗子哥的博客-wocaole.cn</a></p>
+<p>狗子哥的高性能延时队列我就没看，我只是拿来充个数的… 😀</p>
+<h3 id="php-delayed"><a class="header-anchor" href="#php-delayed">¶</a>php delayed</h3>
+<h5 id="环境依赖"><a class="header-anchor" href="#环境依赖">¶</a>环境依赖</h5>
+<ul>
+<li>php&gt;=5.4</li>
+<li>redis</li>
+<li><a href="https://github.com/swoole/swoole-src" title="swoole" target="_blank" rel="external">swoole</a></li>
+</ul>
+<h3 id="简介"><a class="header-anchor" href="#简介">¶</a>简介</h3>
+<p>PHP异步高性能延时队列,Timer由swoole定时器实现,过后会加入pcntl版本Timer。延时队列存储可以是redis或者是php数组,如用redis请确保安装扩展。并且所有任务由swoole的worker_task处理不会影响定时器worker。实现原理是一个环形队列,然后一个指针定时扫描环形队列,详细请参考代码实现。</p>
+<h3 id="使用"><a class="header-anchor" href="#使用">¶</a>使用</h3>
+<p>如下提供了两个Demo:</p>
+<ul>
+<li>serverRunDemo.php 延时队列启动脚本</li>
+<li>sortSetAddDemo.php 任务投递脚本</li>
+</ul>
+<p><strong>serverRunDemo.php</strong></p>
+<pre><code class="language-php">$delayedObj = new delayed();//实例化
+$delayedObj-&gt;setJobEvent(function ($data) {
+        var_dump($data);
+    })-&gt;run(['swoole' =&gt; ['time' =&gt; 1000],
+        'redis' =&gt; ['hash_name_prefix' =&gt; 'delayed:',
+                'host' =&gt; '101.200.196.131',
+                'port' =&gt; 7009]]);
+</code></pre>
+<p>直接把包放入你的代码,实例化delayed类即可。方法setJobEvent为注入你要执行的函数当延时队列推送时会调用你的函数并$data为你投递的值。run方法为启动一个延时队列你需要在第一个参数传入一个配置数组,swoole、redis配置等当redis配置存在时延时队列会以redis为存储。</p>
+<p><a href="https://github.com/chaiyue/delayed" target="_blank" rel="external">github - PHP异步高性能延时队列</a></p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-03-28T07:25:32.000Z" itemprop="datePublished">2017-03-28</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	<!-- 代码1：放在页面需要展示的位置  -->
+<!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="狗子哥的PHP异步“高”性能延时队列"></div> -->
+
+<!--PC版-->
+<div id="SOHUCS" sid="狗子哥的PHP异步“高”性能延时队列"></div>
+<script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
+<script type="text/javascript">
+window.changyan.api.config({
+appid: 'cysOwxxqK',
+conf: 'prod_879976e0282741cfc2efb86588958657'
+});
+</script>
+
+<!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+<!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+<!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cysxwRiW1"></script>
+
 
   
 </div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
 
 
 
