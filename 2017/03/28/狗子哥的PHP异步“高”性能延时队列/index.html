@@ -188,11 +188,11 @@
 <p><strong>serverRunDemo.php</strong></p>
 <pre><code class="language-php">$delayedObj = new delayed();//实例化
 $delayedObj-&gt;setJobEvent(function ($data) {
-        var_dump($data);
-    })-&gt;run(['swoole' =&gt; ['time' =&gt; 1000],
-        'redis' =&gt; ['hash_name_prefix' =&gt; 'delayed:',
-                'host' =&gt; '101.200.196.131',
-                'port' =&gt; 7009]]);
+            var_dump($data);
+        })-&gt;run(['swoole' =&gt; ['time' =&gt; 1000],
+            'redis' =&gt; ['hash_name_prefix' =&gt; 'delayed:',
+                    'host' =&gt; '101.200.196.131',
+                    'port' =&gt; 7009]]);
 </code></pre>
 <p>直接把包放入你的代码,实例化delayed类即可。方法setJobEvent为注入你要执行的函数当延时队列推送时会调用你的函数并$data为你投递的值。run方法为启动一个延时队列你需要在第一个参数传入一个配置数组,swoole、redis配置等当redis配置存在时延时队列会以redis为存储。</p>
 <p><a href="https://github.com/chaiyue/delayed" target="_blank" rel="external">github - PHP异步高性能延时队列</a></p>
@@ -207,7 +207,7 @@ $delayedObj-&gt;setJobEvent(function ($data) {
 
 	<!-- 代码1：放在页面需要展示的位置  -->
 <!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
-<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="狗子哥的PHP异步“高”性能延时队列"></div> -->
+<div id="cyReward" role="cylabs" data-use="reward" sid="狗子哥的PHP异步“高”性能延时队列"></div>
 
 <!--PC版-->
 <div id="SOHUCS" sid="狗子哥的PHP异步“高”性能延时队列"></div>
