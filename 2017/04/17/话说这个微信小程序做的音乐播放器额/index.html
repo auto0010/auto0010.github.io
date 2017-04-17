@@ -85,7 +85,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>我在通州的mysql它挂了它又启动了 | 郭贰小姐的博客 - opqnext.com</title>
+    <title>话说这个微信小程序做的音乐播放器额 | 郭贰小姐的博客 - opqnext.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <meta name="keywords" content="郭贰小姐, PHP, 技术博客, PHP框架, 郭贰小姐的博客, opqnext, 摇滚青年" />
@@ -160,121 +160,36 @@
 	
   
     <h1 class="post-title" itemprop="name">
-      我在通州的mysql它挂了它又启动了
+      话说这个微信小程序做的音乐播放器额
     </h1>
   
 
 	<div class='post-body mb'>
-		<p>我有一台 Linux 机器，是1核1G的，我的机器啊，你的配置可真<sub>低</sub>呀！</p>
-<p>我在我的机器上装了很多很多东西，这个也装，那个也装。</p>
-<p>有一天，我想装一下 mysql ，于是我就装啊装啊。</p>
-<p>装到了晚上，我就去睡觉了，直到第二天我醒来</p>
-<p>就发现mysql挂了，我想重新启动一下，结果挂了，起不来了。</p>
-<p>没事，先听随便一首 <a href="https://site.douban.com/famousyoung/" target="_blank" rel="external">杰出青年乐队</a> 。</p>
-<pre><code>[root@iZ28hwvjw52Z mysql]# service mysql start
-Starting MySQL.The server quit without updating PID file (/[FAILED]ql/iZ28hwvjw52Z.pid).
-</code></pre>
-<p>网上说了很多种办法：</p>
-<p>google了下 ，问题可能的原因有多种，具体什么原因最好的办法是先查看下错误日志：</p>
+		<p>话说这个微信小程序做的音乐播放器额</p>
+<p>恰好我又听到了听了很多年的广播节目<a href="http://www.ximalaya.com/78930245/album/7654776" target="_blank" rel="external">《晓风有约》</a> 想着做一个页面，来支撑节目回放功能。结果对自己前端技能深表无力，微信公众平台个人公众号又不能添加菜单跳转到网页。只能跳转到小程序。</p>
+<p>于是我就开始做…</p>
+<p>本来我想做的功能也不多，以为美滋滋的做完了坐等上线，结果却是审核不通过…</p>
+<p>哈哈哈呵呵呜呜…白做了。我堂堂射手座辛辛苦苦做了几个晚上，竟然审核几次都被打回来。</p>
+<p>结果只有一个，LZTMD不提交了</p>
+<p>不过还是先贴个图，如果有想要源码的可以私聊！毕竟我纯手写音乐播放器（就是那个计时器那块）以及api接口读取节目列表 😄</p>
+<p>好吧，下面播报我的心酸历程，我的肠胃炎…</p>
 <ul>
-<li>可能是/usr/local/mysql/data/rekfan.pid文件没有写的权限<br>
-解决方法 ：给予权限，执行 “chown –R mysql:mysql /var/data” “chmod -R 755 /usr/local/mysql/data”  然后重新启动mysqld！</li>
-<li>可能进程里已经存在mysql进程<br>
-解决方法：用命令“ps -ef|grep mysqld”查看是否有mysqld进程，如果有使用“kill -9  进程号”杀死，然后重新启动mysqld！</li>
-<li>可能是第二次在机器上安装mysql，有残余数据影响了服务的启动。<br>
-解决方法：去mysql的数据目录/data看看，如果存在mysql-bin.index，就赶快把它删除掉吧，它就是罪魁祸首了。本人就是使用第三条方法解决的 ！<a href="http://blog.rekfan.com/?p=186" target="_blank" rel="external">http://blog.rekfan.com/?p=186</a></li>
-<li>mysql在启动时没有指定配置文件时会使用/etc/my.cnf配置文件，请打开这个文件查看在[mysqld]节下有没有指定数据目录(datadir)。<br>
-解决方法：请在[mysqld]下设置这一行：datadir = /usr/local/mysql/data</li>
-<li>skip-federated字段问题<br>
-解决方法：检查一下/etc/my.cnf文件中有没有没被注释掉的skip-federated字段，如果有就立即注释掉吧。</li>
-<li>错误日志目录不存在<br>
-解决方法：使用“chown” “chmod”命令赋予mysql所有者及权限</li>
-<li>惹的祸，如果是centos系统，默认会开启selinux<br>
-解决方法：关闭它，打开/etc/selinux/config，把SELINUX=enforcing改为SELINUX=disabled后存盘退出重启机器试试。</li>
+<li>首页</li>
 </ul>
-<p>后来发现都不是，但是网上说想要知道问题具体什么原因最好的办法是先查看下错误日志，我觉得是啊：</p>
-<pre><code>2016-04-04 10:12:07 12095 [Note] InnoDB: The InnoDB memory heap is disabled
-2016-04-04 10:12:07 12095 [Note] InnoDB: Mutexes and rw_locks use GCC atomic builtins
-2016-04-04 10:12:07 12095 [Note] InnoDB: Memory barrier is not used
-2016-04-04 10:12:07 12095 [Note] InnoDB: Compressed tables use zlib 1.2.3
-2016-04-04 10:12:07 12095 [Note] InnoDB: Using CPU crc32 instructions
-2016-04-04 10:12:07 12095 [Note] InnoDB: Initializing buffer pool, size = 128.0M
-InnoDB: mmap(137363456 bytes) failed; errno 12
-2016-04-04 10:12:07 12095 [ERROR] InnoDB: Cannot allocate memory for the buffer pool
-2016-04-04 10:12:07 12095 [ERROR] Plugin 'InnoDB' init function returned error.
-2016-04-04 10:12:07 12095 [ERROR] Plugin 'InnoDB' registration as a STORAGE ENGINE failed.
-2016-04-04 10:12:07 12095 [ERROR] Unknown/unsupported storage engine: InnoDB
-2016-04-04 10:12:07 12095 [ERROR] Aborting
-2016-04-04 10:12:07 12095 [Note] Binlog end
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'partition'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_DATAFILES'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_TABLESPACES'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_FOREIGN_COLS'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_FOREIGN'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_FIELDS'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_COLUMNS'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_INDEXES'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_TABLESTATS'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_SYS_TABLES'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_FT_INDEX_TABLE'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_FT_INDEX_CACHE'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_FT_CONFIG'
-2016-04-04 10:12:07 12095 [Note] Shutting down plugin 'INNODB_FT_BEING_DELETED'
-</code></pre>
-<p>然后看到这一句Initializing buffer pool, size = 128.0M的下一句Cannot allocate memory for the buffer pool（不能为缓冲池分配内存）就是ERROR了。</p>
-<p>我的机器配置是1核1G的机子，所以修改了my.cnf的innodb_buffer_pool_size之后，就可以正常启动了。</p>
-<pre><code>[root@iZ28hwvjw52Z ~]# service mysql start
-Starting MySQL.. [ OK ]
-</code></pre>
-<p>虽然现在我还不知道到底改成多少为合适的参数，mysql的这些参数都是配合着配置的，所以还是要了解每一个参数的意思。</p>
-<blockquote>
-<p>哎，小弟，小弟，别走啊</p>
-</blockquote>
-<blockquote>
-<p>哇，不得了啊不得了，你有道灵光从天灵盖喷出来，你知道嘛，年纪轻轻的就有一身横练的筋骨，简直百年一见的练武奇才啊，如果有一天让你打通任督二脉，你还不飞龙上天，正所谓我不入地狱，谁入地狱……</p>
-</blockquote>
-<blockquote>
-<p>警恶惩奸，维护世界和平这个任务就交给你了，好嘛？</p>
-</blockquote>
-<blockquote>
-<p>这本《如来神掌》秘笈是无价之宝，我看与你有缘，收你十块钱，传授给你吧。</p>
-</blockquote>
-<h4 id="mysql-配置文件-适合用于内存为-512mb-的主机"><a class="header-anchor" href="#mysql-配置文件-适合用于内存为-512mb-的主机">¶</a>Mysql 配置文件，适合用于内存为 512MB 的主机</h4>
-<pre><code>[client]
-port = 3306
-socket = /tmp/mysql.sock
-[mysqld]
-port = 3306
-socket = /tmp/mysql.sock
-skip-external-locking
-key_buffer_size = 256M
-max_allowed_packet = 1M
-table_open_cache = 256
-sort_buffer_size = 1M
-read_buffer_size = 1M
-read_rnd_buffer_size = 4M
-myisam_sort_buffer_size = 64M
-thread_cache_size = 8
-query_cache_size= 16M
-thread_concurrency = 8
-log-bin=mysql-bin
-binlog_format=mixed
-server-id = 1
-[mysqldump]
-quick
-max_allowed_packet = 16M
-[mysql]
-no-auto-rehash
-[myisamchk]
-key_buffer_size = 128M
-sort_buffer_size = 128M
-read_buffer = 2M
-</code></pre>
-<p>听一首苏伯伯的 <a href="http://music.163.com/#/song?id=145179" target="_blank" rel="external">新鲜花儿开</a> 吧，哎黑呀伊吆呀。</p>
+<p><img src="https://image.opqnext.com/radio_index.jpg-cent50" alt="首页"></p>
+<ul>
+<li>列表页</li>
+</ul>
+<p><img src="https://image.opqnext.com/radio_list.jpg-cent50" alt="列表页"></p>
+<ul>
+<li>吊炸天的详情页</li>
+</ul>
+<p><img src="https://image.opqnext.com/radio_detail.jpg-cent50" alt="详情页"></p>
+<p>总之无论我如何提交，微信都会告诉我，我的小程序播放器涉及游戏虚拟交易，以及个人账号不得开发 FM/电台类 类目，大意是你如果想该类目小程序请你先去注册公司，当老板做大项目。美滋滋</p>
 
 	</div>
 	<div class="meta split">
-		<time class="post-date" datetime="2017-02-16T09:01:17.000Z" itemprop="datePublished">2017-02-16</time>
+		<time class="post-date" datetime="2017-04-17T09:06:22.000Z" itemprop="datePublished">2017-04-17</time>
 	</div>
 </article>
 
@@ -282,10 +197,10 @@ read_buffer = 2M
 
 	<!-- 代码1：放在页面需要展示的位置  -->
 <!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
-<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="我在通州的mysql它挂了它又启动了"></div>-->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="话说这个微信小程序做的音乐播放器额"></div>-->
 
 <!--PC版-->
-<div id="SOHUCS" sid="我在通州的mysql它挂了它又启动了"></div>
+<div id="SOHUCS" sid="话说这个微信小程序做的音乐播放器额"></div>
 <script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
 <script type="text/javascript">
 window.changyan.api.config({
