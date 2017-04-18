@@ -170,7 +170,7 @@
 <p>首先是需求，其实我们想做的就是一个定时发系统消息的任务。这个时间节点是后台进行设置的。然而这个定时任务是需要精确到秒的。所以如果用 Linux 的 crontab 就不是很合适。所以就想别的方法。</p>
 </blockquote>
 <p>然后就看到了网上说的 keyspace notification（密钥空间通知）这个东西。但我告诉你，这是其实是不行的。不哄你，</p>
-<p><a href="http://redis.cn/topics/notifications.html" target="_blank" rel="external">这里</a> 有相关介绍，并且该功能是自** 2.8.0 *<em>版本之后可用的功能。如果使用该功能需要到 redis 的配置中</em> 配置 notify-keyspace-events 的参数为 “Ex” 或者 “Kx”。x 代表了过期事件 *大概就是一种你的 redis 的 key 发生变化的时候就会触发这个功能，并且通知你。比如你的 key 过期了，删除了之类的。</p>
+<p><a href="http://redis.cn/topics/notifications.html" target="_blank" rel="external">这里</a> 有相关介绍，并且该功能是自 <strong>2.8.0</strong> 版本之后可用的功能。如果使用该功能需要到 redis 的配置中 <em>配置 notify-keyspace-events 的参数为 “Ex” 或者 “Kx”。x 代表了过期事件</em> 大概就是一种你的 redis 的 key 发生变化的时候就会触发这个功能，并且通知你。比如你的 key 过期了，删除了之类的。</p>
 <p>他会发送两种类型：</p>
 <ul>
 <li>
