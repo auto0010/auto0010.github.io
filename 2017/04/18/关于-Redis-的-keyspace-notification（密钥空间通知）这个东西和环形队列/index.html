@@ -85,7 +85,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>郭贰小姐的博客 - opqnext.com</title>
+    <title>关于 Redis 的 keyspace notification（密钥空间通知）这个东西和环形队列 | 郭贰小姐的博客 - opqnext.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
     <meta name="keywords" content="郭贰小姐, PHP, 技术博客, PHP框架, 郭贰小姐的博客, opqnext, 摇滚青年" />
@@ -155,112 +155,190 @@
 <!--文章列表-->
 <div class="wrapper">
   
-    <ul class="posts-list mb+ js-posts">
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-            <i class="post-status iconfont icon-icon"></i>  
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/22/迅搜-xunsearch-的安装使用以及操作类分享/">迅搜(xunsearch)的安装使用以及操作类分享</a></span>
-            <time class="post-time" datetime="2017-01-22T04:03:25.000Z" itemprop="datePublished">2017-01-22</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/19/如何写一个自己的渣渣PHP框架（2）/">如何写一个自己的渣渣PHP框架（2）</a></span>
-            <time class="post-time" datetime="2017-01-19T09:22:37.000Z" itemprop="datePublished">2017-01-19</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/18/如何写一个自己的渣渣PHP框架（1）/">如何写一个自己的渣渣PHP框架（1）</a></span>
-            <time class="post-time" datetime="2017-01-18T08:51:37.000Z" itemprop="datePublished">2017-01-18</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/13/Nginx如何安装https-ssl证书/">Nginx如何安装https/ssl证书</a></span>
-            <time class="post-time" datetime="2017-01-13T09:08:23.000Z" itemprop="datePublished">2017-01-13</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/11/如何评价万青新歌《冀西南林路行》？/">如何评价万青新歌《冀西南林路行》？</a></span>
-            <time class="post-time" datetime="2017-01-11T10:04:14.000Z" itemprop="datePublished">2017-01-11</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/10/Python下的Mysql模块MySQLdb安装详解/">Python下的Mysql模块MySQLdb安装详解</a></span>
-            <time class="post-time" datetime="2017-01-10T09:38:14.000Z" itemprop="datePublished">2017-01-10</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/10/搭建了一个博客系统/">搭建了一个博客系统</a></span>
-            <time class="post-time" datetime="2017-01-10T08:43:18.000Z" itemprop="datePublished">2017-01-10</time>
-          </h2>
-        </li>
-      
-    </ul>
-    
-      <div class="pagination mb+ js-pagination">
-        <div class="js-next pagination__load">
-            
-        </div>
-    </div>
-    
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      关于 Redis 的 keyspace notification（密钥空间通知）这个东西和环形队列
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>我决定收尾呼应先来说一下废墟乐队的新专辑<a href="http://music.163.com/#/album?id=35188253" target="_blank" rel="external">《正大光明》</a>。哈哈哈哈</p>
+<blockquote>
+<p>首先是需求，其实我们想做的就是一个定时发系统消息的任务。这个时间节点是后台进行设置的。然而这个定时任务是需要精确到秒的。所以如果用 Linux 的 crontab 就不是很合适。所以就想别的方法。</p>
+</blockquote>
+<p>然后就看到了网上说的 keyspace notification（密钥空间通知）这个东西。但我告诉你，这是其实是不行的。不哄你，</p>
+<p><a href="http://redis.cn/topics/notifications.html" target="_blank" rel="external">这里</a> 有相关介绍，并且该功能是自** 2.8.0 *<em>版本之后可用的功能。如果使用该功能需要到 redis 的配置中</em> 配置 notify-keyspace-events 的参数为 “Ex” 或者 “Kx”。x 代表了过期事件 *大概就是一种你的 redis 的 key 发生变化的时候就会触发这个功能，并且通知你。比如你的 key 过期了，删除了之类的。</p>
+<p>他会发送两种类型：</p>
+<ul>
+<li>
+<p>K键空间通知，所有通知以 __keyspace@ __ 为前缀的</p>
+</li>
+<li>
+<p>E键事件通知，所有通知以 __keyevent@ __ 为前缀的</p>
+</li>
+</ul>
+<p>我们本来的思路是后台每添加一个定时任务的时候，就直接在 redis 里存一个具有时效性的key (SETEX、EXPIRE)，当该 key 失效的时候就会触发 K 或者 E 的通知，收到通知后我们就做发消息处理。为了避免和其他的时效 key 有混淆，redis 的密钥空间通知是提供正则匹配的。所以美滋滋的实现了代码：</p>
+<pre><code>/**
+ * Redis处理类
+ */
+class RedisInstance {
+
+    private $redis;
+
+    public function __construct($host = '127.0.0.1', $port = 6379) {
+        $this-&gt;redis = new Redis();
+        $this-&gt;redis-&gt;connect($host, $port);
+    }
+
+    public function expire($key = null, $time = 0) {
+        return $this-&gt;redis-&gt;expire($key, $time);
+    }
+
+    public function psubscribe($patterns = array(), $callback) {
+        $this-&gt;redis-&gt;psubscribe($patterns, $callback);
+    }
+
+    public function setOption() {
+        $this-&gt;redis-&gt;setOption(\Redis::OPT_READ_TIMEOUT,-1);
+    }
+}
+</code></pre>
+<p>这里没有写具体的消息处理，只是收到通知并且把 key 打印出来！</p>
+<pre><code>&lt;?php
+/**
+ * 处理BI后台消息定时发送
+ * User: 郭贰小姐
+ * Date: 2017/4/13
+ * Time: 下午9:47
+ */
+require_once '/data/momoma.com/redis/RedisInstance.php';
+$redis = new \RedisInstance();
+// 解决Redis客户端订阅时候超时情况
+$redis-&gt;setOption();
+$redis-&gt;psubscribe(array('__keyspace@0*gm_cp*'), 'psCallback');
+// 回调函数,这里写处理逻辑
+function psCallback($redis, $pattern, $chan, $msg)
+{
+    echo &quot;Pattern: $pattern\n&quot;;
+    echo &quot;Channel: $chan\n&quot;;
+    echo &quot;Payload: $msg\n\n&quot;;
+}
+</code></pre>
+<p>结果，无论是用 Ex 还是用 Kx 都不是很好使，有时候可以收到通知，有时候很久都收不到通知。</p>
+<p>那么 why? 为什么？我觉得大概的原因是：</p>
+<p>首先 <a href="http://redis.cn/topics/notifications.html" target="_blank" rel="external">官方</a> 最后一段关于这个 “过期活动的时间” 的说法，我理解的就是，当某个 key 过期了的时候，实际上他并没有马上删除，所以并不会马上去通知，什么情况会下触发过期并且通知：</p>
+<ol>
+<li>当密钥被命令访问并被发现已过期时。</li>
+<li>Redis会随机扫带有过期时间的 key，当扫到并发现已过期时间。</li>
+</ol>
+<p>所以官方讲：如果没有命令不断地定位密钥，并且有许多与TTL相关联的密钥，则在关键生存时间到零之间的时间和生成过期事件的时间之间（就是你设置了某个 key 失效时间 <em>【比如60秒】</em> 和该 key 实际失效并且触发通知事件的时间 <em>【可能70秒】</em> ）可能存在显着的延迟。</p>
+<p>其次 还有什么原因我就不得而知了…哈哈哈</p>
+<h5 id="既然不行"><a class="header-anchor" href="#既然不行">¶</a>既然不行</h5>
+<p>那只能再想别的办法，后来参考了 <a href="https://mp.weixin.qq.com/s?__biz=MjM5ODYxMDA5OQ==&amp;mid=2651959961&amp;idx=1&amp;sn=afec02c8dc6db9445ce40821b5336736&amp;scene=0#wechat_redirect" target="_blank" rel="external">1分钟实现“延迟消息”功能</a> 做一个环形队列，大概原理就是:</p>
+<p><img src="https://image.opqnext.com/cycle.png" alt="环形队列"></p>
+<p>做一个3600（其实我做了60）的环形队列，当你有一个任务是59秒后执行，你就可以将这个任务存到第59个格里，然后圈数存为0。当你有一个任务需要61秒后执行，那你可以将这个任务存到第一个格里，但是圈数要存为1。</p>
+<p>然后有一个定时器，每秒钟都会沿着这个圈中的小格无线循环下去。当然这个定时器小人跳到某一格，他会把该格子中所有圈数为0的数据都处理掉，圈数不为0的，可能需要下一圈或者下下很多圈才需要处理。</p>
+<p>这就是原理，如果你没太理解可以去看下原文，如果你看懂了是不是觉得，嗨，确实是这么回事。这TM有点意思哈…然而并没有什么卵用，代码我还是不会写。</p>
+<p>这个环形队列要怎么实现呢？我想了下可以用 redis 的哈希来实现：</p>
+<pre><code>//添加任务 hash
+$value = [0=&gt;['a任务','b任务'],1=&gt;['c任务'],2=&gt;['d任务']];
+$value = json_encode($value);
+$redis-&gt;hSet('cycle','second_1',$value);
+
+$value = [0=&gt;['e任务','f任务'],1=&gt;['g任务'],2=&gt;['h任务']];
+$value = json_encode($value);
+$redis-&gt;hSet('cycle','second_2',$value);
+</code></pre>
+<p>然后是小人跳格子的环形队列：</p>
+<pre><code>/**
+* 小人跳格子的环形队列啊
+* User: 郭贰小姐
+* Date: 2017/4/16
+* Time: 下午10:38
+*/
+require_once '/data/momoma.com/redis/RedisInstance.php';
+$redis = new \RedisInstance();
+
+// 执行任务的函数
+function task($task){
+   //if(!empty($task)){
+   echo &quot;----开始一次执行任务----\n&quot;;
+   foreach ($task as $val){
+       echo &quot;正在执行 $val\n&quot;;
+   }
+}
+
+while (true){
+   for ($i=1;$i&lt;=60;$i++){
+       // 存储当前指针的位置
+       $redis-&gt;set('current',$i);
+       $val = $redis-&gt;hGet('cycle','second_'.$i);
+       $val = json_decode($val);
+
+       if($val){
+           // 执行当前要执行的任务
+           task($val[0]);
+           array_shift($val);
+           // 把剩余的任务重新写到redis
+           $val = json_encode($val);
+           $redis-&gt;hSet('cycle','second_'.$i,$val);
+       } else {
+           echo &quot;$i 当前时间没有任务可执行\n&quot;;
+       }
+       sleep(1);
+   }
+}
+</code></pre>
+<p>额好吧，我这里用的 sleep(1)，你可以用 swoole 来做定时器。</p>
+<p>但是其实这个方案我们最终并没有用，就算用 swoole 来做定时器，配合 supervisor 来实现进程管理。我觉得还差点什么呐…</p>
+<p>最后，听一首，不，是一张专辑。来自废墟乐队的2017新专辑，从大二开始听周云山的废墟乐队。说实话，这张新专辑也是等了好久的，终于出了，满心欢喜。美滋滋。</p>
+<p><img src="https://image.opqnext.com/20170010.jpg" alt="美滋滋"></p>
+<p><a href="http://music.163.com/#/album?id=35188253" target="_blank" rel="external">《正大光明》</a> - 来自废墟乐队</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-04-18T08:57:15.000Z" itemprop="datePublished">2017-04-18</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	<!-- 代码1：放在页面需要展示的位置  -->
+<!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="关于 Redis 的 keyspace notification（密钥空间通知）这个东西和环形队列"></div>-->
+
+<!--PC版-->
+<div id="SOHUCS" sid="关于 Redis 的 keyspace notification（密钥空间通知）这个东西和环形队列"></div>
+<script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
+<script type="text/javascript">
+window.changyan.api.config({
+appid: 'cysOwxxqK',
+conf: 'prod_879976e0282741cfc2efb86588958657'
+});
+</script>
+
+<!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+<!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+<!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cysxwRiW1"></script>
+
 
   
 </div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
 
 
 

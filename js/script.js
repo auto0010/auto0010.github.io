@@ -88,7 +88,7 @@
 
         var bannerNode = $('.top-image');
         if(bannerNode.data('enable')){
-            var banner = [3,4,6,9,10,11,13,14,15,16,17,18];
+            var banner = [3,4,6,9,10,11,13,14,15];
             var index = parseInt((Math.random() * banner.length));
             //console.log(banner.length,index);
             bannerNode.attr('style','background-image:url(https://image.opqnext.com/banner/'+banner[index]+'.jpg)');
