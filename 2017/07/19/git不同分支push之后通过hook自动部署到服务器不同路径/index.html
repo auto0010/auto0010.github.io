@@ -85,7 +85,7 @@
   <head>
     <meta charset="utf-8">
     
-    <title>archive_a: 2017 | 郭贰小姐的博客 - opqnext.com</title>
+    <title>git不同分支push之后通过hook自动部署到服务器不同路径 | 郭贰小姐的博客 - opqnext.com</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
@@ -156,60 +156,142 @@
 <!--文章列表-->
 <div class="wrapper">
   
-    <ul class="posts-list mb+ js-posts">
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-            <i class="post-status iconfont icon-icon"></i>  
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/11/如何评价万青新歌《冀西南林路行》？/">如何评价万青新歌《冀西南林路行》？</a></span>
-            <time class="post-time" datetime="2017-01-11T10:04:14.000Z" itemprop="datePublished">2017-01-11</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/10/Python下的Mysql模块MySQLdb安装详解/">Python下的Mysql模块MySQLdb安装详解</a></span>
-            <time class="post-time" datetime="2017-01-10T09:38:14.000Z" itemprop="datePublished">2017-01-10</time>
-          </h2>
-        </li>
-      
-                <!--<div class="type">
-          <div class="mask">
-            <i class="iconfont"></i>
-          </div>
-          </div>-->
-        <li class="post">
-          
-          <h2 class="no-background"  >
-            <span><a href="/2017/01/10/搭建了一个博客系统/">搭建了一个博客系统</a></span>
-            <time class="post-time" datetime="2017-01-10T08:43:18.000Z" itemprop="datePublished">2017-01-10</time>
-          </h2>
-        </li>
-      
-    </ul>
-    
-      <div class="pagination mb+ js-pagination">
-        <div class="js-next pagination__load">
-            
-        </div>
-    </div>
-    
+    <!--文章-->
+<article>
+	
+  
+    <h1 class="post-title" itemprop="name">
+      git不同分支push之后通过hook自动部署到服务器不同路径
+    </h1>
+  
+
+	<div class='post-body mb'>
+		<p>我想做的是这么一件事：git 每创建一个新分支，push之后自动部署的服务器的不同路径，然后根据不同端口访问不同分支的代码，以方便进行该分支的测试。</p>
+<p>并且我正在学习 thinkphp 5 呢，正好测试一下。</p>
+<p>举个栗子来说就是：当我新建了一个分支为 8081_opqnext_test，然后完成了某个功能。git add、git commit、当 git push 之后，服务器会自动拉取 8081_opqnext_test 分支上的代码到 /data/tp/8081 这个目录里，然后 访问 <a href="http://beta.tp.opqnext.com:8081" target="_blank" rel="external">beta.tp.opqnext.com:8081</a> 就会直接访问到该分支的代码。同理，当我创建看一个 8082_user_list 的分支。完成了用户列表的功能。git push 之后服务器会自动创建目录 /data/tp/8082 并且将代码到 pull 到该目录。当你访问 <a href="http://beta.tp.opqnext.com:8082" target="_blank" rel="external">beta.tp.opqnext.com:8082</a> 的时候，会访问到该分支的代码便于测试。那 master 的代码每次合并之后 都会自动部署到 /data/tp.opqnext.com/ 访问 <a href="http://tp.opqnext.com" target="_blank" rel="external">tp.opqnext.com</a> 即线上的代码。</p>
+<p>然后我们分开步骤来说：</p>
+<ol>
+<li>首先完成自动部署功能。</li>
+<li>各个分支自动部署到不同路径。</li>
+<li>访问不同的端口映射到不同的分支代码。</li>
+</ol>
+<h6 id="首先完成自动部署"><a class="header-anchor" href="#首先完成自动部署">¶</a>首先完成自动部署</h6>
+<p>这里我用的是 <a href="http://git.oschina.net/" target="_blank" rel="external">码云 git@oschina</a> 来做的。</p>
+<p>首先需要配置 <a href="http://git.mydoc.io/?t=180845" target="_blank" rel="external">ssh公钥</a>，看这里:</p>
+<p>**特别提醒的是：**你的 nginx 是用哪个用户跑的，那么在生产公钥之前先要切换到该用户下。比如我 nginx 是 ngxuser 用户,假如你在 root 下生产公钥并且配置到码云，你的hook是没有权限 clone 和 pull 代码的/(ㄒoㄒ)/~~</p>
+<p>你可以按如下命令来生成sshkey:</p>
+<pre><code>sudo ngxuser  # 你的nginx用户
+ssh-keygen -t rsa -C &quot;xxxxx@xxxxx.com&quot;
+
+# Generating public/private rsa key pair...
+# 三次回车即可生成 ssh key
+</code></pre>
+<p>查看你的 public key，并把他添加到码云（<a href="http://Gitee.com" target="_blank" rel="external">Gitee.com</a>）</p>
+<pre><code>cat ~/.ssh/id_rsa.pub
+# ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6eNtGpNGwstc....
+</code></pre>
+<p>添加后，在终端（Terminal）中输入</p>
+<pre><code>ssh -T git@git.oschina.net
+</code></pre>
+<p>若返回</p>
+<pre><code>Welcome to Git@OSC, yourname!
+</code></pre>
+<p>则说明添加成功，然后去 <a href="http://git.oschina.net/profile/sshkeys" target="_blank" rel="external">码云后台</a> 添加你的 ssh key</p>
+<p>然后去配置 webhook <a href="http://git.mydoc.io/?t=154711" target="_blank" rel="external">查看教程</a> 配置完成 webhook 之后，你每次 push 之后就会触发这个钩子。最简单的，你写一个 auto_deploy_code.php 放到网站根目录。内容是：</p>
+<pre><code>&lt;?php
+echo '&lt;pre&gt;';
+system(&quot;git pull&quot;, $var);
+</code></pre>
+<p>不用接收 webhook 给你发过来的数据，你只管 pull ，假如你只有一个分支的话。</p>
+<p>但是我要接收呢，既然有了数据，当然要接收。</p>
+<p>我创建了一个新的分支，这个分支名称可以规定好，比如：8081_opqnext_user （端口-开发者-开发功能）这里怎么约定，那你后面的脚本就怎么写呗。</p>
+<p>自动部署的脚本：</p>
+<pre><code>&lt;?php
+/**
+ * GIT webHook 自动部署
+ * @author 郭贰小姐
+ * @time: 2017/7/13
+ */
+$hook = str_replace('\&quot;','&quot;',$_POST['hook']);
+$res = json_decode($hook,true);
+$token = '你配置的token';
+if ($res['password'] != $token) {
+    error_log('auto_git_pull ['.date('Y-m-d H:i:s').'] token is error]');
+} else {
+    $dir = '/data/tp/';
+    $branch  = explode('/',$res['push_data']['ref'])[2];
+    $port = explode('_',$branch)[0];
+    $dir = '/data/tp/'.$port;
+    if(isset($res['push_data']['commits']) &amp;&amp; !empty($res['push_data']['commits'])){
+        if($branch == 'master'){
+            $cmd = &quot;cd /data/tp.opqnext.com; git pull origin master&quot;;
+            shell_exec($cmd);
+            error_log('auto_git_pull '.$res['push_data']['user_name'].' '.$branch.' msg:'.$res['push_data']['commits'][0]['message'].' =&gt;'.date('H:i:s'));
+        } else {
+            if(!is_dir($dir)){
+                mkdir($dir,0777,true);
+                $cmd = &quot;cd $dir; git clone -b $branch git@git.oschina.net:opqnext/thinkphp.git $dir&quot;;
+            } else {
+                $cmd = &quot;cd $dir; git pull origin $branch&quot;;
+            }
+            shell_exec($cmd);
+            error_log('auto_git_pull '.$res['push_data']['user_name'].' '.$branch.' msg:'.$res['push_data']['commits'][0]['message'].' =&gt;'.date('H:i:s'));
+        }
+    } else {
+        // 删除分支
+        $cmd = &quot;cd /data/tp; rm -rf $port&quot;;
+        shell_exec($cmd);
+        error_log('auto_git_del_branch '.$res['push_data']['user_name'].' '.$branch.' =&gt;'.date('H:i:s'));
+    }
+}
+</code></pre>
+<p>首先检测 token 是否正确，获取分支名称，截取端口号，填写端口完整路径。<br>
+如果 commit 信息有内容，说明判断分支是否为 master 如果是就拉线上代码，如果是分支 commit 检测端口路径是否存在，存在即 pull 否则 clone 没了。</p>
+<p>既然各个分支的目录都已经创建好了，代码也可以自动部署了。那再配置 nginx 就可以了，我本来以为可以写一个类似于正则匹配，匹配到哪个端口就去访问对应的路径，但是貌似不行，所以只能写多个 server 监听不同的端口，配置相应的路径。</p>
+<p>比如 8081，8082，8083，8084…</p>
+<p>每个开发者三五个端口，不错了。大概就是这样一个理论。我发现我写代码从来都是道理基本通，但是不能用…如果你要用的话，再修改修改就 beautiful 了。</p>
+
+	</div>
+	<div class="meta split">
+		<time class="post-date" datetime="2017-07-19T12:35:28.000Z" itemprop="datePublished">2017-07-19</time>
+	</div>
+</article>
+
+<!--评论-->
+
+	<!-- 代码1：放在页面需要展示的位置  -->
+<!-- 如果您配置过sourceid，建议在div标签中配置sourceid、cid(分类id)，没有请忽略  -->
+<!-- <div id="cyReward" role="cylabs" data-use="reward" sid="git不同分支push之后通过hook自动部署到服务器不同路径"></div>-->
+
+<!--PC版-->
+<div id="SOHUCS" sid="git不同分支push之后通过hook自动部署到服务器不同路径"></div>
+<script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js" ></script>
+<script type="text/javascript">
+window.changyan.api.config({
+appid: 'cysOwxxqK',
+conf: 'prod_879976e0282741cfc2efb86588958657'
+});
+</script>
+
+<!-- 代码2：用来读取评论框配置，此代码需放置在代码1之后。 -->
+<!-- 如果当前页面有评论框，代码2请勿放置在评论框代码之前。 -->
+<!-- 如果页面同时使用多个实验室项目，以下代码只需要引入一次，只配置上面的div标签即可 -->
+<script type="text/javascript" charset="utf-8" src="https://changyan.itc.cn/js/lib/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://changyan.sohu.com/js/changyan.labs.https.js?appid=cysxwRiW1"></script>
+
 
   
 </div>
+
+
+  <svg id="bigTriangleColor" width="100%" height="40" viewBox="0 0 100 102" preserveAspectRatio="none">
+    <path d="M0 0 L50 100 L100 0 Z"></path>
+  </svg>
+
+  
+
+
+  <div class="wrapper"></div>
 
 
 
